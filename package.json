@@ -7,7 +7,7 @@
     "build": "rm -rf build && tsc",
     "lint": "eslint --ext ts . --fix",
     "start": "ts-node src/index.ts",
-    "test": "echo 'no tests'"
+    "test": "vitest --run"
   },
   "devDependencies": {
     "@fewlines/eslint-config": "3.1.2",
