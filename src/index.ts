@@ -5,11 +5,11 @@ const GITHUB_TOKEN = core.getInput("gh-pat");
 const octokit = github.getOctokit(GITHUB_TOKEN);
 
 async function run(): Promise<void> {
+  console.log("context", github.context);
+  console.log("repo", github.context.repo);
   const { pull_request } = github.context.payload;
-  if (pull_request) {
-    console.log("context", github.context);
-    console.log("repo", github.context.repo);
 
+  if (pull_request) {
     await octokit.rest.issues.createComment({
       ...github.context.repo,
       issue_number: pull_request.number,

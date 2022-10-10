@@ -7544,15 +7544,15 @@ var require_github = __commonJS({
 });
 
 // src/index.ts
-var core = __toESM(require_core(), 1);
-var github = __toESM(require_github(), 1);
+var core = __toESM(require_core());
+var github = __toESM(require_github());
 var GITHUB_TOKEN = core.getInput("gh-pat");
 var octokit = github.getOctokit(GITHUB_TOKEN);
 async function run() {
+  console.log("context", github.context);
+  console.log("repo", github.context.repo);
   const { pull_request } = github.context.payload;
   if (pull_request) {
-    console.log("context", github.context);
-    console.log("repo", github.context.repo);
     await octokit.rest.issues.createComment({
       ...github.context.repo,
       issue_number: pull_request.number,
