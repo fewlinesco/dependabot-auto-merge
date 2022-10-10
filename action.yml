@@ -5,5 +5,5 @@ inputs:
     description: "A Githib Personal Access Token"
     required: true
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'build/index.js'
