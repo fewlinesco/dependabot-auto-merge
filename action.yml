@@ -1,0 +1,9 @@
+name: "Dependabot AutoMerge"
+description: "Allows to automatically review and merge Dependabot's pull requests."
+inputs:
+  gh-pat:  # id of input
+    description: "A Githib Personal Access Token"
+    required: true
+runs:
+  using: 'node18'
+  main: 'build/index.js'
