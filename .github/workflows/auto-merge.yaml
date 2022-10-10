@@ -1,4 +1,10 @@
-on: [push]
+name: AutoMerge 💥
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
 
 jobs:
   hello_world_job:
