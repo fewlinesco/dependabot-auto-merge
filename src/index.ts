@@ -1,21 +1,14 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-const GITHUB_TOKEN = core.getInput("gh-pat");
-const octokit = github.getOctokit(GITHUB_TOKEN);
+import autoMerge from "./auto-merge";
 
-async function run(): Promise<void> {
-  console.log("context", github.context);
-  console.log("repo", github.context.repo);
-  const { pull_request } = github.context.payload;
-
-  if (pull_request) {
-    await octokit.rest.issues.createComment({
-      ...github.context.repo,
-      issue_number: pull_request.number,
-      body: "This message is a test",
-    });
-  }
-}
-
-run();
+autoMerge(github.context)
+  .then(() => console.log("🤖 - PR Approved and merge requested"))
+  .catch((error) => {
+    if (error instanceof Error) {
+      console.log("🤖 - ", error.message);
+      console.log("👉 - ", error.stack);
+      core.setFailed(error.message);
+    }
+  });
