@@ -1,7 +1,7 @@
 name: "Dependabot AutoMerge"
 description: "Allows to automatically review and merge Dependabot's pull requests."
 inputs:
-  github-token:  # id of input
+  github-token:
     description: "A Githib Personal Access Token"
     required: true
 runs:
