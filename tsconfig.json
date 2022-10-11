@@ -2,11 +2,9 @@
   "include": ["src/**/*.ts", "src/**/*.ts"],
   "exclude": ["build"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "outDir": "build",
+    "lib": ["ES2019"],
     "isolatedModules": true,
     "esModuleInterop": true,
-    "jsx": "react-jsx",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "target": "ES2019",
@@ -14,7 +12,6 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-
     "paths": {
       "~/*": ["./src/*"],
     }
