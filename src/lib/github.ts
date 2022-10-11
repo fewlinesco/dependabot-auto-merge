@@ -21,17 +21,7 @@ type ActionPayload = {
   prNumber: number;
 };
 
-async function comment({ repo, prNumber }: ActionPayload): Promise<void> {
-  const octokit = getClient();
-
-  await octokit.rest.issues.createComment({
-    ...repo,
-    issue_number: prNumber,
-    body: "@dependabot squash and merge",
-  });
-}
-
-async function review({ repo, prNumber }: ActionPayload): Promise<void> {
+async function approve({ repo, prNumber }: ActionPayload): Promise<void> {
   const octokit = getClient();
 
   await octokit.rest.pulls.createReview({
@@ -41,4 +31,14 @@ async function review({ repo, prNumber }: ActionPayload): Promise<void> {
   });
 }
 
-export { comment, review };
+async function squashAndMerge({ repo, prNumber }: ActionPayload): Promise<void> {
+  const octokit = getClient();
+
+  await octokit.rest.issues.createComment({
+    ...repo,
+    issue_number: prNumber,
+    body: "@dependabot squash and merge",
+  });
+}
+
+export { approve, squashAndMerge };

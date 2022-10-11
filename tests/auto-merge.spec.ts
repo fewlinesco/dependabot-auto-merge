@@ -4,14 +4,11 @@ import autoMerge, { NotDependabotPrError } from "../src/auto-merge";
 import * as github from "../src/lib/github";
 import { contextExample } from "./context";
 
-vi.mock("../src/lib/github", () => ({
-  comment: async () => undefined,
-  review: async () => undefined,
-}));
+vi.mock("../src/lib/github");
 
 describe("#autoMerge", () => {
-  const commentSpy = vi.spyOn(github, "comment");
-  const reviewSpy = vi.spyOn(github, "review");
+  const squashAndMergeSpy = vi.spyOn(github, "squashAndMerge");
+  const approveSpy = vi.spyOn(github, "approve");
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -22,12 +19,12 @@ describe("#autoMerge", () => {
 
     await autoMerge(contextExample);
 
-    expect(reviewSpy).toHaveBeenCalledOnce();
-    expect(reviewSpy).toHaveBeenCalledWith({
+    expect(approveSpy).toHaveBeenCalledOnce();
+    expect(approveSpy).toHaveBeenCalledWith({
       repo: contextExample.repo,
       prNumber: contextExample.payload.pull_request?.number,
     });
-    expect(commentSpy).toHaveBeenCalledOnce();
+    expect(squashAndMergeSpy).toHaveBeenCalledOnce();
   });
 
   test("Exits if the requester is not Dependabot", async () => {
@@ -40,7 +37,7 @@ describe("#autoMerge", () => {
       expect(error).toBeInstanceOf(NotDependabotPrError);
     }
 
-    expect(reviewSpy).toHaveBeenCalledTimes(0);
-    expect(commentSpy).toHaveBeenCalledTimes(0);
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
   });
 });

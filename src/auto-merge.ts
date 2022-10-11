@@ -2,12 +2,7 @@ import type { Context } from "@actions/github/lib/context";
 
 import * as github from "./lib/github";
 
-export class NotDependabotPrError extends Error {
-  constructor(message?: string) {
-    super();
-    this.message = message || "Not a Dependabot PR.";
-  }
-}
+export class NotDependabotPrError extends Error {}
 
 export default async function autoMerge(context: Context): Promise<void> {
   if (context.actor !== "dependabot[bot]") {
@@ -17,7 +12,7 @@ export default async function autoMerge(context: Context): Promise<void> {
   const { pull_request: pullRequest } = context.payload;
 
   if (pullRequest) {
-    await github.review({ repo: context.repo, prNumber: pullRequest.number });
-    await github.comment({ repo: context.repo, prNumber: pullRequest.number });
+    await github.approve({ repo: context.repo, prNumber: pullRequest.number });
+    await github.squashAndMerge({ repo: context.repo, prNumber: pullRequest.number });
   }
 }
