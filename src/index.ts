@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import * as github from "@actions/github";
 
 import autoMerge, { NotDependabotPrError } from "./auto-merge";
@@ -8,10 +7,8 @@ autoMerge(github.context)
   .catch((error) => {
     if (error instanceof NotDependabotPrError) {
       console.log("🤖 - ", error.message);
-      process.exit(0);
     } else if (error instanceof Error) {
-      console.log("🤖 - ", error.message);
+      console.log("🤖💥 - ", error.message);
       console.log("👉 - ", error.stack);
-      core.setFailed(error.message);
     }
   });
