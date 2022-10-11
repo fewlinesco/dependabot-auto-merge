@@ -8,8 +8,8 @@ autoMerge(github.context)
   .catch((error) => {
     if (error instanceof NotDependabotPrError) {
       console.log("🤖 - ", error.message);
-    }
-    if (error instanceof Error) {
+      process.exit(0);
+    } else if (error instanceof Error) {
       console.log("🤖 - ", error.message);
       console.log("👉 - ", error.stack);
       core.setFailed(error.message);
