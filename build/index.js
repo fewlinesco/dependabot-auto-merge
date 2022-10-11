@@ -7596,6 +7596,9 @@ async function autoMerge(context2) {
 
 // src/index.ts
 autoMerge(github2.context).then(() => console.log("\u{1F916} - PR Approved and merge requested")).catch((error) => {
+  if (error instanceof NotDependabotPrError) {
+    console.log("\u{1F916} - ", error.message);
+  }
   if (error instanceof Error) {
     console.log("\u{1F916} - ", error.message);
     console.log("\u{1F449} - ", error.stack);
