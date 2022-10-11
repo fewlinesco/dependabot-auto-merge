@@ -2092,11 +2092,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed(message) {
+    function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error(message);
     }
-    exports.setFailed = setFailed;
+    exports.setFailed = setFailed2;
     function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
@@ -7205,7 +7205,7 @@ var require_dist_node9 = __commonJS({
       }
     };
     var VERSION = "5.16.2";
-    function endpointsToMethods(octokit2, endpointsMap) {
+    function endpointsToMethods(octokit, endpointsMap) {
       const newMethods = {};
       for (const [scope, endpoints] of Object.entries(endpointsMap)) {
         for (const [methodName, endpoint] of Object.entries(endpoints)) {
@@ -7220,16 +7220,16 @@ var require_dist_node9 = __commonJS({
           }
           const scopeMethods = newMethods[scope];
           if (decorations) {
-            scopeMethods[methodName] = decorate(octokit2, scope, methodName, endpointDefaults, decorations);
+            scopeMethods[methodName] = decorate(octokit, scope, methodName, endpointDefaults, decorations);
             continue;
           }
-          scopeMethods[methodName] = octokit2.request.defaults(endpointDefaults);
+          scopeMethods[methodName] = octokit.request.defaults(endpointDefaults);
         }
       }
       return newMethods;
     }
-    function decorate(octokit2, scope, methodName, defaults, decorations) {
-      const requestWithDefaults = octokit2.request.defaults(defaults);
+    function decorate(octokit, scope, methodName, defaults, decorations) {
+      const requestWithDefaults = octokit.request.defaults(defaults);
       function withDecorations(...args) {
         let options = requestWithDefaults.endpoint.merge(...args);
         if (decorations.mapToData) {
@@ -7241,16 +7241,16 @@ var require_dist_node9 = __commonJS({
         }
         if (decorations.renamed) {
           const [newScope, newMethodName] = decorations.renamed;
-          octokit2.log.warn(`octokit.${scope}.${methodName}() has been renamed to octokit.${newScope}.${newMethodName}()`);
+          octokit.log.warn(`octokit.${scope}.${methodName}() has been renamed to octokit.${newScope}.${newMethodName}()`);
         }
         if (decorations.deprecated) {
-          octokit2.log.warn(decorations.deprecated);
+          octokit.log.warn(decorations.deprecated);
         }
         if (decorations.renamedParameters) {
           const options2 = requestWithDefaults.endpoint.merge(...args);
           for (const [name, alias] of Object.entries(decorations.renamedParameters)) {
             if (name in options2) {
-              octokit2.log.warn(`"${name}" parameter is deprecated for "octokit.${scope}.${methodName}()". Use "${alias}" instead`);
+              octokit.log.warn(`"${name}" parameter is deprecated for "octokit.${scope}.${methodName}()". Use "${alias}" instead`);
               if (!(alias in options2)) {
                 options2[alias] = options2[name];
               }
@@ -7263,15 +7263,15 @@ var require_dist_node9 = __commonJS({
       }
       return Object.assign(withDecorations, requestWithDefaults);
     }
-    function restEndpointMethods(octokit2) {
-      const api = endpointsToMethods(octokit2, Endpoints);
+    function restEndpointMethods(octokit) {
+      const api = endpointsToMethods(octokit, Endpoints);
       return {
         rest: api
       };
     }
     restEndpointMethods.VERSION = VERSION;
-    function legacyRestEndpointMethods(octokit2) {
-      const api = endpointsToMethods(octokit2, Endpoints);
+    function legacyRestEndpointMethods(octokit) {
+      const api = endpointsToMethods(octokit, Endpoints);
       return _objectSpread2(_objectSpread2({}, api), {}, {
         rest: api
       });
@@ -7349,9 +7349,9 @@ var require_dist_node10 = __commonJS({
       response.data.total_count = totalCount;
       return response;
     }
-    function iterator(octokit2, route, parameters) {
-      const options = typeof route === "function" ? route.endpoint(parameters) : octokit2.request.endpoint(route, parameters);
-      const requestMethod = typeof route === "function" ? route : octokit2.request;
+    function iterator(octokit, route, parameters) {
+      const options = typeof route === "function" ? route.endpoint(parameters) : octokit.request.endpoint(route, parameters);
+      const requestMethod = typeof route === "function" ? route : octokit.request;
       const method = options.method;
       const headers = options.headers;
       let url = options.url;
@@ -7389,14 +7389,14 @@ var require_dist_node10 = __commonJS({
         })
       };
     }
-    function paginate(octokit2, route, parameters, mapFn) {
+    function paginate(octokit, route, parameters, mapFn) {
       if (typeof parameters === "function") {
         mapFn = parameters;
         parameters = void 0;
       }
-      return gather(octokit2, [], iterator(octokit2, route, parameters)[Symbol.asyncIterator](), mapFn);
+      return gather(octokit, [], iterator(octokit, route, parameters)[Symbol.asyncIterator](), mapFn);
     }
-    function gather(octokit2, results, iterator2, mapFn) {
+    function gather(octokit, results, iterator2, mapFn) {
       return iterator2.next().then((result) => {
         if (result.done) {
           return results;
@@ -7409,7 +7409,7 @@ var require_dist_node10 = __commonJS({
         if (earlyExit) {
           return results;
         }
-        return gather(octokit2, results, iterator2, mapFn);
+        return gather(octokit, results, iterator2, mapFn);
       });
     }
     var composePaginateRest = Object.assign(paginate, {
@@ -7423,10 +7423,10 @@ var require_dist_node10 = __commonJS({
         return false;
       }
     }
-    function paginateRest(octokit2) {
+    function paginateRest(octokit) {
       return {
-        paginate: Object.assign(paginate.bind(null, octokit2), {
-          iterator: iterator.bind(null, octokit2)
+        paginate: Object.assign(paginate.bind(null, octokit), {
+          iterator: iterator.bind(null, octokit)
         })
       };
     }
@@ -7544,23 +7544,64 @@ var require_github = __commonJS({
 });
 
 // src/index.ts
+var core2 = __toESM(require_core());
+var github2 = __toESM(require_github());
+
+// src/lib/github.ts
 var core = __toESM(require_core());
 var github = __toESM(require_github());
-var GITHUB_TOKEN = core.getInput("gh-pat");
-var octokit = github.getOctokit(GITHUB_TOKEN);
-async function run() {
-  console.log("context", github.context);
-  console.log("repo", github.context.repo);
-  const { pull_request } = github.context.payload;
-  if (pull_request) {
-    await octokit.rest.issues.createComment({
-      ...github.context.repo,
-      issue_number: pull_request.number,
-      body: "This message is a test"
-    });
+var client;
+function getClient() {
+  if (client) {
+    return client;
+  } else {
+    const GITHUB_TOKEN = core.getInput("github-token");
+    return github.getOctokit(GITHUB_TOKEN);
   }
 }
-run();
+async function comment({ repo, prNumber }) {
+  const octokit = getClient();
+  await octokit.rest.issues.createComment({
+    ...repo,
+    issue_number: prNumber,
+    body: "@dependabot squash and merge"
+  });
+}
+async function review({ repo, prNumber }) {
+  const octokit = getClient();
+  await octokit.rest.pulls.createReview({
+    ...repo,
+    pull_number: prNumber,
+    event: "APPROVE"
+  });
+}
+
+// src/auto-merge.ts
+var NotDependabotPrError = class extends Error {
+  constructor(message) {
+    super();
+    this.message = message || "Not a Dependabot PR.";
+  }
+};
+async function autoMerge(context2) {
+  if (context2.actor !== "dependabot[bot]") {
+    throw new NotDependabotPrError();
+  }
+  const { pull_request: pullRequest } = context2.payload;
+  if (pullRequest) {
+    await review({ repo: context2.repo, prNumber: pullRequest.number });
+    await comment({ repo: context2.repo, prNumber: pullRequest.number });
+  }
+}
+
+// src/index.ts
+autoMerge(github2.context).then(() => console.log("\u{1F916} - PR Approved and merge requested")).catch((error) => {
+  if (error instanceof Error) {
+    console.log("\u{1F916} - ", error.message);
+    console.log("\u{1F449} - ", error.stack);
+    core2.setFailed(error.message);
+  }
+});
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
  *
