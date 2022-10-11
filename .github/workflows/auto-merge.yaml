@@ -4,18 +4,21 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, reopened, synchronize, closed]
+    types: [opened, reopened, synchronize]
 
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
 
     name: AutoMerge test
+
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-      - name: Auto merge
+      - name: 🔬 Auto merge
         uses: ./
         id: automerge
         with:
-          gh-pat: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GH_TOKEN }}
