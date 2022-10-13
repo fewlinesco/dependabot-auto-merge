@@ -1,9 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { UnsupportedFeatureError } from "../src/errors";
 import { get, diff, NotValidSemverError } from "../src/lib/version";
-
-vi.mock("../src/lib/github");
 
 describe("version", () => {
   describe("#get", () => {
