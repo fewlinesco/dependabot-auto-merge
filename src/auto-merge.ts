@@ -2,7 +2,7 @@ import type { Context } from "@actions/github/lib/context";
 
 import * as github from "./lib/github";
 
-export class NotDependabotPrError extends Error {}
+class NotDependabotPrError extends Error {}
 
 export default async function autoMerge(context: Context): Promise<void> {
   if (context.actor !== "dependabot[bot]") {
@@ -16,3 +16,5 @@ export default async function autoMerge(context: Context): Promise<void> {
     await github.squashAndMerge({ repo: context.repo, prNumber: pullRequest.number });
   }
 }
+
+export { NotDependabotPrError };
