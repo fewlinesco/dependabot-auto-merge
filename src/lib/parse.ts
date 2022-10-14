@@ -1,3 +1,6 @@
+import { WrongInputError } from "~/errors";
+import { AllowedBumps } from "~/types";
+
 class ParseError extends Error {
   constructor(message: string) {
     super();
@@ -28,4 +31,17 @@ function getRawVersion(title: string, target: "from" | "to"): string {
   throw new ParseError("No version found.");
 }
 
-export { getName, getRawVersion, ParseError };
+function getBlacklist(rawBlacklist: string): Record<string, AllowedBumps> {
+  return rawBlacklist.split(/\s/).reduce((acc, raw) => {
+    const [name, limit] = raw.split(":");
+    if (!limit || ["major", "minor", "patch"].includes(limit)) {
+      return {
+        ...acc,
+        [name]: limit ?? "patch",
+      };
+    }
+    throw new WrongInputError("blacklist");
+  }, {});
+}
+
+export { getName, getBlacklist, getRawVersion, ParseError };

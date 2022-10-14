@@ -1,6 +1,7 @@
 import semver from "semver";
 
 import { UnsupportedFeatureError } from "~/errors";
+import { AllowedBumps } from "~/types";
 
 class NotValidSemverError extends Error {}
 
@@ -11,7 +12,7 @@ type Version = {
   patch: number;
 };
 
-function diff(from: string, to: string): "major" | "minor" | "patch" {
+function diff(from: string, to: string): AllowedBumps {
   let releaseType;
 
   try {

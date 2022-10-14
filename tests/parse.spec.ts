@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { getName, getRawVersion, ParseError } from "../src/lib/parse";
+import { WrongInputError } from "../src/errors";
+import { getBlacklist, getName, getRawVersion, ParseError } from "../src/lib/parse";
 
 describe("parse", () => {
   describe("#getName", () => {
@@ -40,6 +41,49 @@ describe("parse", () => {
 
       expect(typeof to).toBe("string");
       expect(to).toBe(target);
+    });
+  });
+
+  describe("#getBlackList", () => {
+    test("Throws when provided with wrong input", () => {
+      expect.assertions(2);
+
+      const deps = ["fake-one:fake"];
+      try {
+        getBlacklist(deps.join(" "));
+      } catch (error) {
+        expect(error).toBeInstanceOf(WrongInputError);
+        if (error instanceof Error) {
+          expect(error.message).toBe("Wrong 'blacklist' input.");
+        }
+      }
+    });
+
+    test("Parses irregarless of the spaces between deps", () => {
+      const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
+      const expected = { "fake-one": "major", "fake-2": "minor", "fake-3": "patch" };
+
+      expect(getBlacklist(deps.join(" "))).toMatchObject(expected);
+      expect(getBlacklist(deps.join("\n"))).toMatchObject(expected);
+      expect(getBlacklist(deps.join("        "))).toMatchObject(expected);
+      expect(
+        getBlacklist(
+          deps.join(`
+          `),
+        ),
+      ).toMatchObject(expected);
+    });
+
+    test("Parses a row black list", () => {
+      const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
+      const parsed = getBlacklist(deps.join(" "));
+      expect(parsed).toMatchObject({ "fake-one": "major", "fake-2": "minor", "fake-3": "patch" });
+    });
+
+    test("Considers the absence of limit as 'patch'", () => {
+      const deps = ["fake"];
+      const parsed = getBlacklist(deps.join(" "));
+      expect(parsed).toMatchObject({ fake: "patch" });
     });
   });
 });
