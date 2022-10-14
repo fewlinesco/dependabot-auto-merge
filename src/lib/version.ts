@@ -65,7 +65,7 @@ function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<
     });
   }
 
-  return weights[releaseType] > weights[blocked];
+  return blocked ? weights[releaseType] > weights[blocked] : true;
 }
 
 export { get, diff, isBumpAllowed, NotValidSemverError };

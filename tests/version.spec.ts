@@ -68,6 +68,20 @@ describe("version", () => {
   });
 
   describe("#isBumpAllowed", () => {
+    test("Allows all bumps if no matching dependancy is in blacklist", () => {
+      expect.assertions(1);
+
+      const bump = {
+        dependancy: "deps-name",
+        from: get("1.0.0"),
+        to: get("2.0.0"),
+      };
+      const releaseType = diff(bump.from.full, bump.to.full);
+
+      const assertion = isBumpAllowed(bump, releaseType, {});
+      expect(assertion).toBe(true);
+    });
+
     describe("With a simple dependancy name", () => {
       test("Denies all bumps when provided with 'patch'", () => {
         expect.assertions(1);
