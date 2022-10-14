@@ -4,6 +4,9 @@ inputs:
   github-token:
     description: "A Githib Personal Access Token"
     required: true
+  blacklist:
+    description: "A list of NPM packages you want to handle differently"
+    required: false
 runs:
   using: 'node16'
   main: 'build/index.js'

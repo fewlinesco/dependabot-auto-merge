@@ -41,4 +41,14 @@ async function squashAndMerge({ repo, prNumber }: ActionPayload): Promise<void> 
   });
 }
 
-export { approve, squashAndMerge };
+async function askForReview({ repo, prNumber }: ActionPayload): Promise<void> {
+  const octokit = getClient();
+
+  await octokit.rest.issues.createComment({
+    ...repo,
+    issue_number: prNumber,
+    body: "Manual check needed",
+  });
+}
+
+export { approve, askForReview, squashAndMerge };
