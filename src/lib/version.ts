@@ -54,7 +54,18 @@ function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<
     patch: 3,
   };
 
-  return weights[releaseType] > weights[blacklist[bump.dependancy]];
+  let blocked: AllowedBumps | undefined = blacklist[bump.dependancy];
+
+  const blacklistNames = Object.keys(blacklist);
+  if (!blocked && blacklistNames.length > 0) {
+    blacklistNames.forEach((name) => {
+      if (name.endsWith("*") && bump.dependancy.startsWith(name.replace("*", ""))) {
+        blocked = blacklist[name];
+      }
+    });
+  }
+
+  return weights[releaseType] > weights[blocked];
 }
 
 export { get, diff, isBumpAllowed, NotValidSemverError };
