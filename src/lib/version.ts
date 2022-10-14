@@ -1,16 +1,9 @@
 import semver from "semver";
 
 import { UnsupportedFeatureError } from "~/errors";
-import { AllowedBumps } from "~/types";
+import { AllowedBumps, Bump, Version } from "~/types";
 
 class NotValidSemverError extends Error {}
-
-type Version = {
-  full: string;
-  major: number;
-  minor: number;
-  patch: number;
-};
 
 function diff(from: string, to: string): AllowedBumps {
   let releaseType;
@@ -54,4 +47,14 @@ function get(text: string): Version {
   }
 }
 
-export { get, diff, NotValidSemverError };
+function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<string, AllowedBumps>): boolean {
+  const weights = {
+    major: 1,
+    minor: 2,
+    patch: 3,
+  };
+
+  return weights[releaseType] > weights[blacklist[bump.dependancy]];
+}
+
+export { get, diff, isBumpAllowed, NotValidSemverError };

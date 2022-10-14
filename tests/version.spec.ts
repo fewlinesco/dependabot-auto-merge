@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { UnsupportedFeatureError } from "../src/errors";
-import { get, diff, NotValidSemverError } from "../src/lib/version";
+import { get, diff, NotValidSemverError, isBumpAllowed } from "../src/lib/version";
 
 describe("version", () => {
   describe("#get", () => {
@@ -44,12 +44,66 @@ describe("version", () => {
       expect(diff("1.0.0", "0.0.0")).toBe("major");
       expect(diff("0.1.0", "0.0.0")).toBe("minor");
       expect(diff("0.0.1", "0.0.0")).toBe("patch");
+      expect(diff("0.0.0", "0.0.1")).toBe("patch");
+      expect(diff("1.0.0", "1.1.1")).toBe("minor");
+      expect(diff("1.0.0", "2.1.1")).toBe("major");
+      expect(diff("2.0.1", "1.1.1")).toBe("major");
 
       try {
         diff("0.0.1-alpha.1", "0.0.2-alpha.1");
       } catch (error) {
         expect(error).toBeInstanceOf(UnsupportedFeatureError);
       }
+    });
+  });
+
+  describe("#isBumpAllowed", () => {
+    test("Denies all bumps when provided with 'patch' and simple dependancy name", () => {
+      const bump = {
+        dependancy: "deps-name",
+        from: get("1.0.0"),
+        to: get("2.0.0"),
+      };
+      const releaseType = diff(bump.from.full, bump.to.full);
+
+      const assertion = isBumpAllowed(bump, releaseType, { "deps-name": "patch" });
+      expect(assertion).toBe(false);
+    });
+
+    test("Allows patch bumps when provided with 'minor' and simple dependancy name", () => {
+      const bump = {
+        dependancy: "deps-name",
+        from: get("1.0.0"),
+        to: get("1.0.1"),
+      };
+      const releaseType = diff(bump.from.full, bump.to.full);
+
+      const assertion = isBumpAllowed(bump, releaseType, { "deps-name": "minor" });
+      expect(assertion).toBe(true);
+    });
+
+    test("Allows patch bumps when provided with 'major' and simple dependancy name", () => {
+      const bump = {
+        dependancy: "deps-name",
+        from: get("1.0.0"),
+        to: get("1.0.1"),
+      };
+      const releaseType = diff(bump.from.full, bump.to.full);
+
+      const assertion = isBumpAllowed(bump, releaseType, { "deps-name": "major" });
+      expect(assertion).toBe(true);
+    });
+
+    test("Allows minor bumps when provided with 'major' and simple dependancy name", () => {
+      const bump = {
+        dependancy: "deps-name",
+        from: get("1.0.0"),
+        to: get("1.1.0"),
+      };
+      const releaseType = diff(bump.from.full, bump.to.full);
+
+      const assertion = isBumpAllowed(bump, releaseType, { "deps-name": "major" });
+      expect(assertion).toBe(true);
     });
   });
 });
