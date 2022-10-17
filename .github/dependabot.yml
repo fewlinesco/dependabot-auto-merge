@@ -8,8 +8,6 @@ updates:
     time: "09:00"
     timezone: "Europe/Paris"
   open-pull-requests-limit: 10
-  reviewers:
-    - "Meyclem"
 
 - package-ecosystem: "github-actions"
   directory: "/"
@@ -17,5 +15,3 @@ updates:
     interval: daily
     time: "09:00"
     timezone: "Europe/Paris"
-  reviewers:
-    - "Meyclem"
