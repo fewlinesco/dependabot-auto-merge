@@ -9959,13 +9959,21 @@ async function squashAndMerge({ repo, prNumber }) {
     body: "@dependabot squash and merge"
   });
 }
-async function askForReview({ repo, prNumber }) {
+async function askForReview({ repo, prNumber }, reviewers, message) {
   const octokit = getClient();
-  await octokit.rest.issues.createComment({
-    ...repo,
-    issue_number: prNumber,
-    body: "Manual check needed"
-  });
+  const body = "Manual check needed" + (message ? ":\n**" + message + "**" : ".") + "\n" + reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+  await Promise.all([
+    octokit.rest.pulls.requestReviewers({
+      ...repo,
+      pull_number: prNumber,
+      reviewers
+    }),
+    octokit.rest.issues.createComment({
+      ...repo,
+      issue_number: prNumber,
+      body
+    })
+  ]);
 }
 
 // src/lib/parse.ts
@@ -9992,8 +10000,8 @@ function getRawVersion(title, target) {
   }
   throw new ParseError("No valid 'version' found in PR title.");
 }
-function getBlacklist(rawBlacklist) {
-  return rawBlacklist.split(/\s/).reduce((acc, raw) => {
+function getBlacklist(rawBlacklist2) {
+  return rawBlacklist2.split(/\s/).reduce((acc, raw) => {
     const [name, limit] = raw.split(":");
     if (!limit || ["major", "minor", "patch"].includes(limit)) {
       return {
@@ -10064,8 +10072,9 @@ function isBumpAllowed(bump, releaseType, blacklist) {
 }
 
 // src/auto-merge.ts
-async function autoMerge(context2, rawBlacklist) {
+async function autoMerge(context2, rawBlacklist2, rawReviewers) {
   const { pull_request: pullRequest } = context2.payload;
+  const reviewers = rawReviewers.split(" ");
   try {
     if (context2.actor !== "dependabot[bot]") {
       throw new NotDependabotPrError();
@@ -10079,22 +10088,24 @@ async function autoMerge(context2, rawBlacklist) {
       const proceed = isBumpAllowed(
         bump,
         diff(bump.from.full, bump.to.full),
-        getBlacklist(rawBlacklist)
+        getBlacklist(rawBlacklist2)
       );
       const pullRequestParam = { repo: context2.repo, prNumber: pullRequest.number };
       if (proceed) {
         await approve(pullRequestParam);
         await squashAndMerge(pullRequestParam);
       } else {
-        await askForReview(pullRequestParam);
+        await askForReview({ repo: context2.repo, prNumber: pullRequest.number }, reviewers);
       }
     }
-    return ["OK", "\u2705 - Automerge process ended."];
+    return ["OK", "Automerge process ended."];
   } catch (error) {
-    if (error instanceof NotDependabotPrError || error instanceof NotValidSemverError || error instanceof UnsupportedFeatureError || error instanceof ParseError) {
+    if (error instanceof NotValidSemverError || error instanceof UnsupportedFeatureError || error instanceof ParseError) {
       if (pullRequest) {
-        await askForReview({ repo: context2.repo, prNumber: pullRequest.number });
+        await askForReview({ repo: context2.repo, prNumber: pullRequest.number }, reviewers, error.message);
       }
+      return ["NOK", error.message];
+    } else if (error instanceof NotDependabotPrError) {
       return ["NOK", error.message];
     } else {
       throw error;
@@ -10103,7 +10114,8 @@ async function autoMerge(context2, rawBlacklist) {
 }
 
 // src/index.ts
-autoMerge(github2.context, core2.getInput("blacklist") || "").then((output) => console.log(output)).catch((error) => {
+var rawBlacklist = [core2.getInput("npm-blacklist"), core2.getInput("gha-blacklist")].filter((item) => item).join(" ");
+autoMerge(github2.context, rawBlacklist, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
   if (error instanceof NotDependabotPrError) {
     console.info(error.message);
   } else if (error instanceof Error) {

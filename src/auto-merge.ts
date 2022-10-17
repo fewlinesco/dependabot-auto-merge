@@ -1,6 +1,12 @@
 import type { Context } from "@actions/github/lib/context";
 
-import { NotDependabotPrError, NotValidSemverError, ParseError, UnsupportedFeatureError } from "./errors";
+import {
+  NotDependabotPrError,
+  NotValidSemverError,
+  ParseError,
+  ReviewAlreadyPendingError,
+  UnsupportedFeatureError,
+} from "./errors";
 import * as github from "./lib/github";
 import * as parse from "./lib/parse";
 import * as version from "./lib/version";
@@ -51,6 +57,8 @@ export default async function autoMerge(
       return ["NOK", error.message];
     } else if (error instanceof NotDependabotPrError) {
       return ["NOK", error.message];
+    } else if (error instanceof ReviewAlreadyPendingError) {
+      return ["OK", error.message];
     } else {
       throw error;
     }

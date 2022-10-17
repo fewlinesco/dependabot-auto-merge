@@ -13,6 +13,12 @@ class ParseError extends Error {
     this.message = message;
   }
 }
+class ReviewAlreadyPendingError extends Error {
+  constructor() {
+    super();
+    this.message = "There is already a pending review request.";
+  }
+}
 
 class UnsupportedFeatureError extends Error {
   constructor() {
@@ -28,4 +34,11 @@ class WrongInputError extends Error {
   }
 }
 
-export { NotDependabotPrError, NotValidSemverError, ParseError, UnsupportedFeatureError, WrongInputError };
+export {
+  NotDependabotPrError,
+  NotValidSemverError,
+  ParseError,
+  ReviewAlreadyPendingError,
+  UnsupportedFeatureError,
+  WrongInputError,
+};

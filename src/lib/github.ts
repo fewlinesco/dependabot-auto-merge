@@ -3,6 +3,8 @@ import * as github from "@actions/github";
 import {} from "@actions/github/lib/github";
 import { GitHub } from "@actions/github/lib/utils";
 
+import { ReviewAlreadyPendingError } from "~/errors";
+
 let client: InstanceType<typeof GitHub>;
 function getClient(): InstanceType<typeof GitHub> {
   if (client) {
@@ -49,6 +51,17 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
     (message ? ":\n**" + message + "**" : ".") +
     "\n" +
     reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+
+  const { data: comments } = await octokit.rest.issues.listComments({
+    ...repo,
+    issue_number: prNumber,
+  });
+
+  for (const comment of comments) {
+    if (comment && comment.body && comment.body.includes("The latest updates on your project")) {
+      throw new ReviewAlreadyPendingError();
+    }
+  }
 
   await Promise.all([
     octokit.rest.pulls.requestReviewers({
