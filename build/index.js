@@ -9918,6 +9918,12 @@ var ParseError = class extends Error {
     this.message = message;
   }
 };
+var ReviewAlreadyPendingError = class extends Error {
+  constructor() {
+    super();
+    this.message = "There is already a pending review request.";
+  }
+};
 var UnsupportedFeatureError = class extends Error {
   constructor() {
     super();
@@ -9962,6 +9968,15 @@ async function squashAndMerge({ repo, prNumber }) {
 async function askForReview({ repo, prNumber }, reviewers, message) {
   const octokit = getClient();
   const body = "Manual check needed" + (message ? ":\n**" + message + "**" : ".") + "\n" + reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+  const { data: comments } = await octokit.rest.issues.listComments({
+    ...repo,
+    issue_number: prNumber
+  });
+  for (const comment of comments) {
+    if (comment && comment.body && comment.body.includes("The latest updates on your project")) {
+      throw new ReviewAlreadyPendingError();
+    }
+  }
   await Promise.all([
     octokit.rest.pulls.requestReviewers({
       ...repo,
@@ -10107,6 +10122,8 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
       return ["NOK", error.message];
     } else if (error instanceof NotDependabotPrError) {
       return ["NOK", error.message];
+    } else if (error instanceof ReviewAlreadyPendingError) {
+      return ["OK", error.message];
     } else {
       throw error;
     }
