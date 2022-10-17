@@ -10110,7 +10110,11 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
         await approve(pullRequestParam);
         await squashAndMerge(pullRequestParam);
       } else {
-        await askForReview({ repo: context2.repo, prNumber: pullRequest.number }, reviewers);
+        await askForReview(
+          { repo: context2.repo, prNumber: pullRequest.number },
+          reviewers,
+          "Dependancy is blacklisted"
+        );
       }
     }
     return ["OK", "Automerge process ended."];
