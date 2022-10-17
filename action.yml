@@ -10,7 +10,7 @@ inputs:
   gha-blacklist:
     description: "A list of Github Actions you want to handle differently"
     required: false
-  reviwers:
+  reviewers:
     description: "The reviewers that will be ask the review if needed"
     required: false
 runs:

@@ -58,8 +58,8 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
   });
 
   for (const comment of comments) {
-    if (comment && comment.body && comment.body.includes("The latest updates on your project")) {
-      throw new ReviewAlreadyPendingError();
+    if (comment && comment.body && comment.body.includes("Manual check needed")) {
+      throw new ReviewAlreadyPendingError(reviewers);
     }
   }
 

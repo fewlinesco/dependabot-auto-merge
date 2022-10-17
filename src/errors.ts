@@ -14,9 +14,9 @@ class ParseError extends Error {
   }
 }
 class ReviewAlreadyPendingError extends Error {
-  constructor() {
+  constructor(reviewers: string[]) {
     super();
-    this.message = "There is already a pending review request.";
+    this.message = ["A review has already been requested to:", ...reviewers].join("\n-");
   }
 }
 
