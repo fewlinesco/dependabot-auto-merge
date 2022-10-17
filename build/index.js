@@ -1702,10 +1702,10 @@ var require_oidc_utils = __commonJS({
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
-            throw new Error(`Failed to get ID Token. 
- 
+            throw new Error(`Failed to get ID Token.
+
         Error Code : ${error.statusCode}
- 
+
         Error Message: ${error.result.message}`);
           });
           const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
@@ -10138,7 +10138,7 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
 var rawBlacklist = [core2.getInput("npm-blacklist"), core2.getInput("gha-blacklist")].filter((item) => item).join(" ");
 autoMerge(github2.context, rawBlacklist, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
   if (error instanceof NotDependabotPrError) {
-    console.info(error.message);
+    console.log(error.message);
   } else if (error instanceof Error) {
     console.error("\u{1F4A5} - ", error.message);
     console.error("\u{1F449} - ", error.stack);

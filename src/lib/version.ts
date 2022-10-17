@@ -52,18 +52,18 @@ function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<
     patch: 3,
   };
 
-  let blocked: AllowedBumps | undefined = blacklist[bump.dependancy];
+  let wantedReleaseType: AllowedBumps | undefined = blacklist[bump.dependancy];
 
   const blacklistNames = Object.keys(blacklist);
-  if (!blocked && blacklistNames.length > 0) {
+  if (!wantedReleaseType && blacklistNames.length > 0) {
     blacklistNames.forEach((name) => {
       if (name.endsWith("*") && bump.dependancy.startsWith(name.replace("*", ""))) {
-        blocked = blacklist[name];
+        wantedReleaseType = blacklist[name];
       }
     });
   }
 
-  return blocked ? weights[releaseType] > weights[blocked] : true;
+  return wantedReleaseType ? weights[releaseType] > weights[wantedReleaseType] : true;
 }
 
 export { get, diff, isBumpAllowed };
