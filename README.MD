@@ -87,3 +87,5 @@ In this example:
 ```
 
 Reviewers **must be valid Github nicknames"**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
+
+💡 If you go with this option, we recommend you to remove the reviwers from your Dependabot config file: It would defeat the purpose to only add reviwers if the auto merge is not possible.
