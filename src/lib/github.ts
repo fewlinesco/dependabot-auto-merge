@@ -41,14 +41,28 @@ async function squashAndMerge({ repo, prNumber }: ActionPayload): Promise<void> 
   });
 }
 
-async function askForReview({ repo, prNumber }: ActionPayload): Promise<void> {
+async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string[], message?: string): Promise<void> {
   const octokit = getClient();
 
-  await octokit.rest.issues.createComment({
-    ...repo,
-    issue_number: prNumber,
-    body: "Manual check needed",
-  });
+  const body =
+    "Manual check needed" +
+    (message ? ":\n**" + message + "**" : ".") +
+    "\n" +
+    reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+
+  await Promise.all([
+    octokit.rest.pulls.requestReviewers({
+      ...repo,
+      pull_number: prNumber,
+      reviewers,
+    }),
+
+    octokit.rest.issues.createComment({
+      ...repo,
+      issue_number: prNumber,
+      body,
+    }),
+  ]);
 }
 
 export { approve, askForReview, squashAndMerge };

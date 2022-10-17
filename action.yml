@@ -4,8 +4,14 @@ inputs:
   github-token:
     description: "A Githib Personal Access Token"
     required: true
-  blacklist:
+  npm-blacklist:
     description: "A list of NPM packages you want to handle differently"
+    required: false
+  gha-blacklist:
+    description: "A list of Github Actions you want to handle differently"
+    required: false
+  reviwers:
+    description: "The reviewers that will be ask the review if needed"
     required: false
 runs:
   using: 'node16'

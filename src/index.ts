@@ -3,8 +3,10 @@ import * as github from "@actions/github";
 
 import autoMerge, { NotDependabotPrError } from "./auto-merge";
 
-autoMerge(github.context, core.getInput("blacklist") || "")
-  .then((output) => console.log(output))
+const rawBlacklist = [core.getInput("npm-blacklist"), core.getInput("gha-blacklist")].filter((item) => item).join(" ");
+
+autoMerge(github.context, rawBlacklist, core.getInput("reviewers") || "")
+  .then(([result, message]) => console.log(result === "OK" ? "✅ - " : "🚧 - " + message))
   .catch((error) => {
     if (error instanceof NotDependabotPrError) {
       console.info(error.message);

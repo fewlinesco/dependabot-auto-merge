@@ -11,7 +11,7 @@ describe("#autoMerge", () => {
   const approveSpy = vi.spyOn(github, "approve");
   const askForReviewSpy = vi.spyOn(github, "askForReview");
   const squashAndMergeSpy = vi.spyOn(github, "squashAndMerge");
-  const SUCCESS_MESSAGE = "✅ - Automerge process ended.";
+  const SUCCESS_MESSAGE = "Automerge process ended.";
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -22,13 +22,13 @@ describe("#autoMerge", () => {
 
     const ctx = Object.assign(contextExample, { actor: "Test bot" });
 
-    const [result, message] = await autoMerge(ctx, "");
+    const [result, message] = await autoMerge(ctx, "", "");
 
     expect(result).toBe("NOK");
     expect(message).toBe("💤 Skipping: This is not a Dependabot PR.");
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
-    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(0);
   });
 
   test("Skips in case of no valid versions", async () => {
@@ -45,6 +45,7 @@ describe("#autoMerge", () => {
         },
       } as unknown as Context,
       "something/specific:patch",
+      "",
     );
 
     expect(result).toBe("NOK");
@@ -68,6 +69,7 @@ describe("#autoMerge", () => {
         },
       } as unknown as Context,
       "something/specific:patch",
+      "",
     );
 
     expect(result).toBe("NOK");
@@ -81,7 +83,7 @@ describe("#autoMerge", () => {
     expect.assertions(6);
     const ctx = Object.assign(contextExample, { actor: "dependabot[bot]" });
 
-    const [result, message] = await autoMerge(ctx, "");
+    const [result, message] = await autoMerge(ctx, "", "");
 
     expect(result).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
@@ -103,6 +105,7 @@ describe("#autoMerge", () => {
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
       } as unknown as Context,
       "something/specific:patch",
+      "",
     );
     expect(result).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
@@ -120,6 +123,7 @@ describe("#autoMerge", () => {
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
       } as unknown as Context,
       "something/*:patch",
+      "",
     );
     expect(result).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
@@ -128,7 +132,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(1);
   });
 
-  test.only("Proceeds in case of Dependabot PR and range without target is black listed", async () => {
+  test("Proceeds in case of Dependabot PR and range without target is black listed", async () => {
     expect.assertions(5);
 
     const [result, message] = await autoMerge(
@@ -137,6 +141,7 @@ describe("#autoMerge", () => {
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
       } as unknown as Context,
       "something/*",
+      "",
     );
     expect(result).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);

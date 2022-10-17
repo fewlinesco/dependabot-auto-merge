@@ -5,8 +5,13 @@ import * as github from "./lib/github";
 import * as parse from "./lib/parse";
 import * as version from "./lib/version";
 
-export default async function autoMerge(context: Context, rawBlacklist: string): Promise<["OK" | "NOK", string]> {
+export default async function autoMerge(
+  context: Context,
+  rawBlacklist: string,
+  rawReviewers: string,
+): Promise<["OK" | "NOK", string]> {
   const { pull_request: pullRequest } = context.payload;
+  const reviewers = rawReviewers.split(" ");
   try {
     if (context.actor !== "dependabot[bot]") {
       throw new NotDependabotPrError();
@@ -30,20 +35,21 @@ export default async function autoMerge(context: Context, rawBlacklist: string):
         await github.approve(pullRequestParam);
         await github.squashAndMerge(pullRequestParam);
       } else {
-        await github.askForReview(pullRequestParam);
+        await github.askForReview({ repo: context.repo, prNumber: pullRequest.number }, reviewers);
       }
     }
-    return ["OK", "✅ - Automerge process ended."];
+    return ["OK", "Automerge process ended."];
   } catch (error) {
     if (
-      error instanceof NotDependabotPrError ||
       error instanceof NotValidSemverError ||
       error instanceof UnsupportedFeatureError ||
       error instanceof ParseError
     ) {
       if (pullRequest) {
-        await github.askForReview({ repo: context.repo, prNumber: pullRequest.number });
+        await github.askForReview({ repo: context.repo, prNumber: pullRequest.number }, reviewers, error.message);
       }
+      return ["NOK", error.message];
+    } else if (error instanceof NotDependabotPrError) {
       return ["NOK", error.message];
     } else {
       throw error;
