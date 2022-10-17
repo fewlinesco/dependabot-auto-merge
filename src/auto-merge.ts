@@ -41,7 +41,11 @@ export default async function autoMerge(
         await github.approve(pullRequestParam);
         await github.squashAndMerge(pullRequestParam);
       } else {
-        await github.askForReview({ repo: context.repo, prNumber: pullRequest.number }, reviewers);
+        await github.askForReview(
+          { repo: context.repo, prNumber: pullRequest.number },
+          reviewers,
+          "Dependancy is blacklisted",
+        );
       }
     }
     return ["OK", "Automerge process ended."];

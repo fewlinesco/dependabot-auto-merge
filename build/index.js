@@ -9919,9 +9919,9 @@ var ParseError = class extends Error {
   }
 };
 var ReviewAlreadyPendingError = class extends Error {
-  constructor() {
+  constructor(reviewers) {
     super();
-    this.message = "There is already a pending review request.";
+    this.message = ["A review has already been requested to:", ...reviewers].join("\n-");
   }
 };
 var UnsupportedFeatureError = class extends Error {
@@ -9973,8 +9973,8 @@ async function askForReview({ repo, prNumber }, reviewers, message) {
     issue_number: prNumber
   });
   for (const comment of comments) {
-    if (comment && comment.body && comment.body.includes("The latest updates on your project")) {
-      throw new ReviewAlreadyPendingError();
+    if (comment && comment.body && comment.body.includes("Manual check needed")) {
+      throw new ReviewAlreadyPendingError(reviewers);
     }
   }
   await Promise.all([
