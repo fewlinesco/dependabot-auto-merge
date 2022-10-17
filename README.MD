@@ -45,9 +45,12 @@ This basic configuration will allow **any pull request from Dependabot** to be a
 
 ### Workflow inputs
 
-We already seen the `github-token` input, which is **required**.
+####
 
-You can provide additional options to have more control aver the action:
+The `github-token` input is **required**. It is a Github PAT and therefore allows the Github action to act as a user.
+For this Github action, the **required token's scopes are `read:org, repo, workflow, write:discussion`**.
+
+It's also required to **register github token into Dependabot's secrets** on the Repository (*⚙️ settings > secrets > dependabot*).
 
 #### `npm-blacklist` and `gha-blacklist`
 
@@ -75,7 +78,6 @@ In this example:
 - `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `"@typescript-eslint` on a major version: `"@typescript-eslint/*:major`.
 
 #### `reviewers`
-
 
 ```yaml
 # ...
