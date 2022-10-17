@@ -45,7 +45,15 @@ This basic configuration will allow **any pull request from Dependabot** to be a
 
 ### Workflow inputs
 
-####
+#### `github-token`
+
+```yaml
+# ...
+- name: 🔬 Auto merge
+  uses: fewlinesco/dependabot-auto-merge
+  with:
+    github-token: ${{ secrets.GH_TOKEN }}
+```
 
 The `github-token` input is **required**. It is a Github PAT and therefore allows the Github action to act as a user.
 For this Github action, the **required token's scopes are `read:org, repo, workflow, write:discussion`**.
