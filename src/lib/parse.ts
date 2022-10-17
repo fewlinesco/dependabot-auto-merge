@@ -1,12 +1,5 @@
-import { UnsupportedFeatureError, WrongInputError } from "~/errors";
+import { ParseError, UnsupportedFeatureError, WrongInputError } from "~/errors";
 import { AllowedBumps } from "~/types";
-
-class ParseError extends Error {
-  constructor(message: string) {
-    super();
-    this.message = message;
-  }
-}
 
 function getName(title: string): string {
   const match = /(bump|update) (?<name>(?:@[^\s]+\/)?[^\s]+) (requirement)?/i.exec(title);

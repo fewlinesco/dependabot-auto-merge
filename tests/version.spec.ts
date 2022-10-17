@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { UnsupportedFeatureError } from "../src/errors";
-import { get, diff, NotValidSemverError, isBumpAllowed } from "../src/lib/version";
+import { NotValidSemverError, UnsupportedFeatureError } from "../src/errors";
+import { get, diff, isBumpAllowed } from "../src/lib/version";
 
 describe("version", () => {
   describe("#get", () => {

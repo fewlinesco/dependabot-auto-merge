@@ -1,9 +1,7 @@
 import semver from "semver";
 
-import { UnsupportedFeatureError } from "~/errors";
+import { NotValidSemverError, UnsupportedFeatureError } from "~/errors";
 import { AllowedBumps, Bump, Version } from "~/types";
-
-class NotValidSemverError extends Error {}
 
 function diff(from: string, to: string): AllowedBumps {
   let releaseType;
@@ -68,4 +66,4 @@ function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<
   return blocked ? weights[releaseType] > weights[blocked] : true;
 }
 
-export { get, diff, isBumpAllowed, NotValidSemverError };
+export { get, diff, isBumpAllowed };
