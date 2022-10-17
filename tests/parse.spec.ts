@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { WrongInputError } from "../src/errors";
+import { UnsupportedFeatureError, WrongInputError } from "../src/errors";
 import { getBlacklist, getName, getRawVersion, ParseError } from "../src/lib/parse";
 
 describe("parse", () => {
@@ -12,7 +12,7 @@ describe("parse", () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ParseError);
         if (error instanceof Error) {
-          expect(error.message).toBe("No name found.");
+          expect(error.message).toBe("No valid dependancy 'name' found in PR title.");
         }
       }
     });
@@ -41,6 +41,25 @@ describe("parse", () => {
 
       expect(typeof to).toBe("string");
       expect(to).toBe(target);
+    });
+
+    test("Rounds incomplete numeric versions to semver", () => {
+      expect.assertions(4);
+
+      expect(getRawVersion("Bump fake/package from 5 to 1", "from")).toBe("5.0.0");
+      expect(getRawVersion("Bump fake/package from 5 to 1", "to")).toBe("1.0.0");
+      expect(getRawVersion("Bump fake/package from 5.2 to 1", "from")).toBe("5.2.0");
+      expect(getRawVersion("Bump fake/package from 5 to 1.2", "to")).toBe("1.2.0");
+    });
+
+    test("Throws UnsupportedFeatureError for pre-releases ", () => {
+      expect.assertions(1);
+
+      try {
+        getRawVersion("Bump fake/package from 0.0.1-alpha.1 to 0.0.2", "from");
+      } catch (error) {
+        expect(error).toBeInstanceOf(UnsupportedFeatureError);
+      }
     });
   });
 
