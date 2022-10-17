@@ -9967,7 +9967,7 @@ async function squashAndMerge({ repo, prNumber }) {
 }
 async function askForReview({ repo, prNumber }, reviewers, message) {
   const octokit = getClient();
-  const body = "Manual check needed" + (message ? ":\n**" + message + "**" : ".") + "\n" + reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+  const body = "\u{1F6A7} Manual check needed \u{1F6A7}\n" + (message ? ":\n**" + message + "**" : ".") + "\n\n" + reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
   const { data: comments } = await octokit.rest.issues.listComments({
     ...repo,
     issue_number: prNumber
@@ -9978,11 +9978,11 @@ async function askForReview({ repo, prNumber }, reviewers, message) {
     }
   }
   await Promise.all([
-    octokit.rest.pulls.requestReviewers({
+    reviewers.length ? octokit.rest.pulls.requestReviewers({
       ...repo,
       pull_number: prNumber,
       reviewers
-    }),
+    }) : null,
     octokit.rest.issues.createComment({
       ...repo,
       issue_number: prNumber,
@@ -10113,7 +10113,7 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
         await askForReview(
           { repo: context2.repo, prNumber: pullRequest.number },
           reviewers,
-          "Dependancy is blacklisted"
+          "Auto merge on this dependancy is disabled."
         );
       }
     }

@@ -44,7 +44,7 @@ export default async function autoMerge(
         await github.askForReview(
           { repo: context.repo, prNumber: pullRequest.number },
           reviewers,
-          "Dependancy is blacklisted",
+          "Auto merge on this dependancy is disabled.",
         );
       }
     }

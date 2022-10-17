@@ -47,9 +47,9 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
   const octokit = getClient();
 
   const body =
-    "Manual check needed" +
+    "🚧 Manual check needed 🚧\n" +
     (message ? ":\n**" + message + "**" : ".") +
-    "\n" +
+    "\n\n" +
     reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
 
   const { data: comments } = await octokit.rest.issues.listComments({
@@ -64,11 +64,13 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
   }
 
   await Promise.all([
-    octokit.rest.pulls.requestReviewers({
-      ...repo,
-      pull_number: prNumber,
-      reviewers,
-    }),
+    reviewers.length
+      ? octokit.rest.pulls.requestReviewers({
+          ...repo,
+          pull_number: prNumber,
+          reviewers,
+        })
+      : null,
 
     octokit.rest.issues.createComment({
       ...repo,
