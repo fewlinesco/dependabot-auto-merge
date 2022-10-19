@@ -25,7 +25,7 @@ export default async function autoMerge(
 
     if (pullRequest) {
       const bump = {
-        dependancy: parse.getName(pullRequest.title),
+        dependency: parse.getName(pullRequest.title),
         from: version.get(parse.getRawVersion(pullRequest.title, "from")),
         to: version.get(parse.getRawVersion(pullRequest.title, "to")),
       };
@@ -44,7 +44,7 @@ export default async function autoMerge(
         await github.askForReview(
           { repo: context.repo, prNumber: pullRequest.number },
           reviewers,
-          "Auto merge on this dependancy is disabled.",
+          "Auto merge on this dependency is disabled.",
         );
       }
     }

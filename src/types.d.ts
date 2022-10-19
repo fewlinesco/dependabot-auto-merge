@@ -1,7 +1,7 @@
 type AllowedBumps = "major" | "minor" | "patch";
 
 type Bump = {
-  dependancy: string;
+  dependency: string;
   from: Version;
   to: Version;
 };

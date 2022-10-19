@@ -62,7 +62,7 @@ It's also required to **register github token into Dependabot's secrets** on the
 
 #### `npm-blacklist` and `gha-blacklist`
 
-A list of dependancies on which you want additional control. The syntax is `<dependancy-name>[:<limitation>]`:
+A list of dependancies on which you want additional control. The syntax is `<dependency-name>[:<limitation>]`:
 
 
 ```yaml

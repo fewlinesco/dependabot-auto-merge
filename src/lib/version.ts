@@ -52,12 +52,12 @@ function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<
     patch: 3,
   };
 
-  let wantedReleaseType: AllowedBumps | undefined = blacklist[bump.dependancy];
+  let wantedReleaseType: AllowedBumps | undefined = blacklist[bump.dependency];
 
   const blacklistNames = Object.keys(blacklist);
   if (!wantedReleaseType && blacklistNames.length > 0) {
     blacklistNames.forEach((name) => {
-      if (name.endsWith("*") && bump.dependancy.startsWith(name.replace("*", ""))) {
+      if (name.endsWith("*") && bump.dependency.startsWith(name.replace("*", ""))) {
         wantedReleaseType = blacklist[name];
       }
     });

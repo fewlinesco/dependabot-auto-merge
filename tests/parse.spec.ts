@@ -12,7 +12,7 @@ describe("parse", () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ParseError);
         if (error instanceof Error) {
-          expect(error.message).toBe("No valid dependancy 'name' found in PR title.");
+          expect(error.message).toBe("No valid dependency 'name' found in PR title.");
         }
       }
     });

@@ -28,12 +28,12 @@ describe("version", () => {
     test("Returns the parsed version", () => {
       expect.assertions(4);
 
-      const dependancyVersion = "1.2.3";
-      const v = get(dependancyVersion);
-      expect(v.full).toBe(dependancyVersion);
-      expect(v.major).toBe(Number(dependancyVersion.split(".")[0]));
-      expect(v.minor).toBe(Number(dependancyVersion.split(".")[1]));
-      expect(v.patch).toBe(Number(dependancyVersion.split(".")[2]));
+      const dependencyVersion = "1.2.3";
+      const v = get(dependencyVersion);
+      expect(v.full).toBe(dependencyVersion);
+      expect(v.major).toBe(Number(dependencyVersion.split(".")[0]));
+      expect(v.minor).toBe(Number(dependencyVersion.split(".")[1]));
+      expect(v.patch).toBe(Number(dependencyVersion.split(".")[2]));
     });
   });
 
@@ -68,11 +68,11 @@ describe("version", () => {
   });
 
   describe("#isBumpAllowed", () => {
-    test("Allows all bumps if no matching dependancy is in blacklist", () => {
+    test("Allows all bumps if no matching dependency is in blacklist", () => {
       expect.assertions(1);
 
       const bump = {
-        dependancy: "deps-name",
+        dependency: "deps-name",
         from: get("1.0.0"),
         to: get("2.0.0"),
       };
@@ -82,12 +82,12 @@ describe("version", () => {
       expect(assertion).toBe(true);
     });
 
-    describe("With a simple dependancy name", () => {
+    describe("With a simple dependency name", () => {
       test("Denies all bumps when provided with 'patch'", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "deps-name",
+          dependency: "deps-name",
           from: get("1.0.0"),
           to: get("2.0.0"),
         };
@@ -101,7 +101,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "deps-name",
+          dependency: "deps-name",
           from: get("1.0.0"),
           to: get("1.0.1"),
         };
@@ -115,7 +115,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "deps-name",
+          dependency: "deps-name",
           from: get("1.0.0"),
           to: get("1.0.1"),
         };
@@ -129,7 +129,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "deps-name",
+          dependency: "deps-name",
           from: get("1.0.0"),
           to: get("1.1.0"),
         };
@@ -145,7 +145,7 @@ describe("version", () => {
 
       test("Denies bumps when provided with 'patch'", () => {
         const bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("0.0.1"),
           to: get("1.0.0"),
         };
@@ -159,7 +159,7 @@ describe("version", () => {
         expect.assertions(2);
 
         let bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("0.1.0"),
           to: get("0.2.0"),
         };
@@ -169,7 +169,7 @@ describe("version", () => {
         expect(assertion).toBe(false);
 
         bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("1.0.0"),
           to: get("2.0.0"),
         };
@@ -183,7 +183,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("0.0.1"),
           to: get("0.0.2"),
         };
@@ -197,7 +197,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("1.0.0"),
           to: get("1.0.1"),
         };
@@ -211,7 +211,7 @@ describe("version", () => {
         expect.assertions(1);
 
         const bump = {
-          dependancy: "@something/else",
+          dependency: "@something/else",
           from: get("1.0.0"),
           to: get("1.1.0"),
         };

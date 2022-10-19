@@ -96,7 +96,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(0);
   });
 
-  test("Proceeds in case of Dependabot PR and dependancy is black listed", async () => {
+  test("Proceeds in case of Dependabot PR and dependency is black listed", async () => {
     expect.assertions(5);
 
     const [result, message] = await autoMerge(

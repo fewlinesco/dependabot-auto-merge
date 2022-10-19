@@ -9997,7 +9997,7 @@ function getName(title) {
   if (match && match.groups && match.groups.name) {
     return match.groups.name;
   }
-  throw new ParseError("No valid dependancy 'name' found in PR title.");
+  throw new ParseError("No valid dependency 'name' found in PR title.");
 }
 function getRawVersion(title, target) {
   const regex = /(?<version>(?<major>0|[1-9]\d*)(\.(?<minor>(0|[1-9]\d*))(\.(?<patch>(0|[1-9]\d*))(?:-((?<remainder>0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)?)?)/;
@@ -10074,11 +10074,11 @@ function isBumpAllowed(bump, releaseType, blacklist) {
     minor: 2,
     patch: 3
   };
-  let blocked = blacklist[bump.dependancy];
+  let blocked = blacklist[bump.dependency];
   const blacklistNames = Object.keys(blacklist);
   if (!blocked && blacklistNames.length > 0) {
     blacklistNames.forEach((name) => {
-      if (name.endsWith("*") && bump.dependancy.startsWith(name.replace("*", ""))) {
+      if (name.endsWith("*") && bump.dependency.startsWith(name.replace("*", ""))) {
         blocked = blacklist[name];
       }
     });
@@ -10096,7 +10096,7 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
     }
     if (pullRequest) {
       const bump = {
-        dependancy: getName(pullRequest.title),
+        dependency: getName(pullRequest.title),
         from: get(getRawVersion(pullRequest.title, "from")),
         to: get(getRawVersion(pullRequest.title, "to"))
       };
@@ -10113,7 +10113,7 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
         await askForReview(
           { repo: context2.repo, prNumber: pullRequest.number },
           reviewers,
-          "Auto merge on this dependancy is disabled."
+          "Auto merge on this dependency is disabled."
         );
       }
     }

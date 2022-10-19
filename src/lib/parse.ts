@@ -8,7 +8,7 @@ function getName(title: string): string {
     return match.groups.name;
   }
 
-  throw new ParseError("No valid dependancy 'name' found in PR title.");
+  throw new ParseError("No valid dependency 'name' found in PR title.");
 }
 
 function getRawVersion(title: string, target: "from" | "to"): string {
