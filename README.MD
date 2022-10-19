@@ -80,8 +80,8 @@ A list of dependancies on which you want additional control. The syntax is `<dep
 > one line and multine syntaxes are allowed.
 
 In this example:
-- `pkg-a:major` means major bumps won't be allowed for `pkk-a`. But minors and patches can still be auto merged.
-- `pkg-b:minor` means major and minor bumps won't be allowed for `pkk-a`. But patches can still be auto merged.
+- `pkg-a:major` means major bumps won't be allowed for `pkg-a`. But minors and patches can still be auto merged.
+- `pkg-b:minor` means major and minor bumps won't be allowed for `pkg-b`. But patches can still be auto merged.
 - `pkg-c:patch` and `pkg-d` is a different syntax for the same thing: no auto merge allowed.
 - `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `"@typescript-eslint` on a major version: `"@typescript-eslint/*:major`.
 
@@ -98,4 +98,4 @@ In this example:
 
 Reviewers **must be valid Github nicknames"**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
 
-💡 If you go with this option, we recommend you to remove the reviwers from your Dependabot config file: It would defeat the purpose to only add reviwers if the auto merge is not possible.
+💡 If you go with this option, we recommend you to remove the reviwers from your Dependabot config file: It would defeat the purpose to only add reviewers if the auto merge is not possible.
