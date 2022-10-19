@@ -1702,10 +1702,10 @@ var require_oidc_utils = __commonJS({
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
-            throw new Error(`Failed to get ID Token.
-
+            throw new Error(`Failed to get ID Token. 
+ 
         Error Code : ${error.statusCode}
-
+ 
         Error Message: ${error.result.message}`);
           });
           const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
@@ -10074,16 +10074,16 @@ function isBumpAllowed(bump, releaseType, blacklist) {
     minor: 2,
     patch: 3
   };
-  let blocked = blacklist[bump.dependency];
+  let wantedReleaseType = blacklist[bump.dependency];
   const blacklistNames = Object.keys(blacklist);
-  if (!blocked && blacklistNames.length > 0) {
+  if (!wantedReleaseType && blacklistNames.length > 0) {
     blacklistNames.forEach((name) => {
       if (name.endsWith("*") && bump.dependency.startsWith(name.replace("*", ""))) {
-        blocked = blacklist[name];
+        wantedReleaseType = blacklist[name];
       }
     });
   }
-  return blocked ? weights[releaseType] > weights[blocked] : true;
+  return wantedReleaseType ? weights[releaseType] > weights[wantedReleaseType] : true;
 }
 
 // src/auto-merge.ts
