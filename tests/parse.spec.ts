@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { UnsupportedFeatureError, WrongInputError } from "../src/errors";
-import { getBlacklist, getName, getRawVersion, ParseError } from "../src/lib/parse";
+import { getDisallowlist, getName, getRawVersion, ParseError } from "../src/lib/parse";
 
 describe("parse", () => {
   describe("#getName", () => {
@@ -69,11 +69,11 @@ describe("parse", () => {
 
       const deps = ["fake-one:fake"];
       try {
-        getBlacklist(deps.join(" "));
+        getDisallowlist(deps.join(" "));
       } catch (error) {
         expect(error).toBeInstanceOf(WrongInputError);
         if (error instanceof Error) {
-          expect(error.message).toBe("Wrong 'blacklist' input.");
+          expect(error.message).toBe("Wrong 'disallowlist' input.");
         }
       }
     });
@@ -82,11 +82,11 @@ describe("parse", () => {
       const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
       const expected = { "fake-one": "major", "fake-2": "minor", "fake-3": "patch" };
 
-      expect(getBlacklist(deps.join(" "))).toMatchObject(expected);
-      expect(getBlacklist(deps.join("\n"))).toMatchObject(expected);
-      expect(getBlacklist(deps.join("        "))).toMatchObject(expected);
+      expect(getDisallowlist(deps.join(" "))).toMatchObject(expected);
+      expect(getDisallowlist(deps.join("\n"))).toMatchObject(expected);
+      expect(getDisallowlist(deps.join("        "))).toMatchObject(expected);
       expect(
-        getBlacklist(
+        getDisallowlist(
           deps.join(`
           `),
         ),
@@ -95,13 +95,13 @@ describe("parse", () => {
 
     test("Parses a row black list", () => {
       const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
-      const parsed = getBlacklist(deps.join(" "));
+      const parsed = getDisallowlist(deps.join(" "));
       expect(parsed).toMatchObject({ "fake-one": "major", "fake-2": "minor", "fake-3": "patch" });
     });
 
     test("Considers the absence of limit as 'patch'", () => {
       const deps = ["fake"];
-      const parsed = getBlacklist(deps.join(" "));
+      const parsed = getDisallowlist(deps.join(" "));
       expect(parsed).toMatchObject({ fake: "patch" });
     });
   });

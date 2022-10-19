@@ -79,7 +79,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(1);
   });
 
-  test("Proceeds in case of Dependabot PR and no blacklist provided", async () => {
+  test("Proceeds in case of Dependabot PR and no disallowlist provided", async () => {
     expect.assertions(6);
     const ctx = Object.assign(contextExample, { actor: "dependabot[bot]" });
 

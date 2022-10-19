@@ -45,20 +45,20 @@ function get(text: string): Version {
   }
 }
 
-function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, blacklist: Record<string, AllowedBumps>): boolean {
+function isBumpAllowed(bump: Bump, releaseType: AllowedBumps, disallowlist: Record<string, AllowedBumps>): boolean {
   const weights = {
     major: 1,
     minor: 2,
     patch: 3,
   };
 
-  let wantedReleaseType: AllowedBumps | undefined = blacklist[bump.dependency];
+  let wantedReleaseType: AllowedBumps | undefined = disallowlist[bump.dependency];
 
-  const blacklistNames = Object.keys(blacklist);
-  if (!wantedReleaseType && blacklistNames.length > 0) {
-    blacklistNames.forEach((name) => {
+  const disallowlistNames = Object.keys(disallowlist);
+  if (!wantedReleaseType && disallowlistNames.length > 0) {
+    disallowlistNames.forEach((name) => {
       if (name.endsWith("*") && bump.dependency.startsWith(name.replace("*", ""))) {
-        wantedReleaseType = blacklist[name];
+        wantedReleaseType = disallowlist[name];
       }
     });
   }

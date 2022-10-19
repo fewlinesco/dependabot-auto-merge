@@ -68,7 +68,7 @@ describe("version", () => {
   });
 
   describe("#isBumpAllowed", () => {
-    test("Allows all bumps if no matching dependency is in blacklist", () => {
+    test("Allows all bumps if no matching dependency is in disallowlist", () => {
       expect.assertions(1);
 
       const bump = {

@@ -13,7 +13,7 @@ import * as version from "./lib/version";
 
 export default async function autoMerge(
   context: Context,
-  rawBlacklist: string,
+  rawDisallowlist: string,
   rawReviewers: string,
 ): Promise<["OK" | "NOK", string]> {
   const { pull_request: pullRequest } = context.payload;
@@ -33,7 +33,7 @@ export default async function autoMerge(
       const proceed = version.isBumpAllowed(
         bump,
         version.diff(bump.from.full, bump.to.full),
-        parse.getBlacklist(rawBlacklist),
+        parse.getDisallowlist(rawDisallowlist),
       );
 
       const pullRequestParam = { repo: context.repo, prNumber: pullRequest.number };

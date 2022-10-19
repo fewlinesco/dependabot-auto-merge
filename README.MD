@@ -60,7 +60,7 @@ For this Github action, the **required token's scopes are `read:org, repo, workf
 
 It's also required to **register github token into Dependabot's secrets** on the Repository (*⚙️ settings > secrets > dependabot*).
 
-#### `npm-blacklist` and `gha-blacklist`
+#### `npm-disallowlist` and `gha-disallowlist`
 
 A list of dependancies on which you want additional control. The syntax is `<dependency-name>[:<limitation>]`:
 
@@ -71,8 +71,8 @@ A list of dependancies on which you want additional control. The syntax is `<dep
   uses: fewlinesco/dependabot-auto-merge
   with:
     github-token: ${{ secrets.GH_TOKEN }}
-    npm-blacklist: pkg-a:major pkg-b:minor
-    gha-blacklist: >
+    npm-disallowlist: pkg-a:major pkg-b:minor
+    gha-disallowlist: >
       pkg-c:patch
       pkg-d pkg-e*"
 ```

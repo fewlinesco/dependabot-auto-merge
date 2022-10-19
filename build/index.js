@@ -1702,10 +1702,10 @@ var require_oidc_utils = __commonJS({
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
-            throw new Error(`Failed to get ID Token. 
- 
+            throw new Error(`Failed to get ID Token.
+
         Error Code : ${error.statusCode}
- 
+
         Error Message: ${error.result.message}`);
           });
           const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
@@ -10015,8 +10015,8 @@ function getRawVersion(title, target) {
   }
   throw new ParseError("No valid 'version' found in PR title.");
 }
-function getBlacklist(rawBlacklist2) {
-  return rawBlacklist2.split(/\s/).reduce((acc, raw) => {
+function getDisallowlist(rawDisallowlist2) {
+  return rawDisallowlist2.split(/\s/).reduce((acc, raw) => {
     const [name, limit] = raw.split(":");
     if (!limit || ["major", "minor", "patch"].includes(limit)) {
       return {
@@ -10024,7 +10024,7 @@ function getBlacklist(rawBlacklist2) {
         [name]: limit != null ? limit : "patch"
       };
     }
-    throw new WrongInputError("blacklist");
+    throw new WrongInputError("disallowlist");
   }, {});
 }
 
@@ -10068,18 +10068,18 @@ function get(text) {
     };
   }
 }
-function isBumpAllowed(bump, releaseType, blacklist) {
+function isBumpAllowed(bump, releaseType, disallowlist) {
   const weights = {
     major: 1,
     minor: 2,
     patch: 3
   };
-  let wantedReleaseType = blacklist[bump.dependency];
-  const blacklistNames = Object.keys(blacklist);
-  if (!wantedReleaseType && blacklistNames.length > 0) {
-    blacklistNames.forEach((name) => {
+  let wantedReleaseType = disallowlist[bump.dependency];
+  const disallowlistNames = Object.keys(disallowlist);
+  if (!wantedReleaseType && disallowlistNames.length > 0) {
+    disallowlistNames.forEach((name) => {
       if (name.endsWith("*") && bump.dependency.startsWith(name.replace("*", ""))) {
-        wantedReleaseType = blacklist[name];
+        wantedReleaseType = disallowlist[name];
       }
     });
   }
@@ -10087,7 +10087,7 @@ function isBumpAllowed(bump, releaseType, blacklist) {
 }
 
 // src/auto-merge.ts
-async function autoMerge(context2, rawBlacklist2, rawReviewers) {
+async function autoMerge(context2, rawDisallowlist2, rawReviewers) {
   const { pull_request: pullRequest } = context2.payload;
   const reviewers = rawReviewers.split(" ");
   try {
@@ -10103,7 +10103,7 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
       const proceed = isBumpAllowed(
         bump,
         diff(bump.from.full, bump.to.full),
-        getBlacklist(rawBlacklist2)
+        getDisallowlist(rawDisallowlist2)
       );
       const pullRequestParam = { repo: context2.repo, prNumber: pullRequest.number };
       if (proceed) {
@@ -10135,8 +10135,8 @@ async function autoMerge(context2, rawBlacklist2, rawReviewers) {
 }
 
 // src/index.ts
-var rawBlacklist = [core2.getInput("npm-blacklist"), core2.getInput("gha-blacklist")].filter((item) => item).join(" ");
-autoMerge(github2.context, rawBlacklist, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
+var rawDisallowlist = [core2.getInput("npm-disallowlist"), core2.getInput("gha-disallowlist")].filter((item) => item).join(" ");
+autoMerge(github2.context, rawDisallowlist, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
   if (error instanceof NotDependabotPrError) {
     console.log(error.message);
   } else if (error instanceof Error) {
