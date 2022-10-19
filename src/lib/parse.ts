@@ -32,8 +32,8 @@ function getRawVersion(title: string, target: "from" | "to"): string {
   throw new ParseError("No valid 'version' found in PR title.");
 }
 
-function getDisallowlist(rawDisallowlist: string): Record<string, AllowedBumps> {
-  return rawDisallowlist.split(/\s/).reduce((acc, raw) => {
+function getDisallowList(rawDisallowList: string): Record<string, AllowedBumps> {
+  return rawDisallowList.split(/\s/).reduce((acc, raw) => {
     const [name, limit] = raw.split(":");
     if (!limit || ["major", "minor", "patch"].includes(limit)) {
       return {
@@ -45,4 +45,4 @@ function getDisallowlist(rawDisallowlist: string): Record<string, AllowedBumps> 
   }, {});
 }
 
-export { getName, getDisallowlist, getRawVersion, ParseError };
+export { getName, getDisallowList, getRawVersion, ParseError };

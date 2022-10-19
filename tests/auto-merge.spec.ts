@@ -96,7 +96,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(0);
   });
 
-  test("Proceeds in case of Dependabot PR and dependency is black listed", async () => {
+  test("Proceeds in case of Dependabot PR and dependency is disallowed", async () => {
     expect.assertions(5);
 
     const [result, message] = await autoMerge(
@@ -114,7 +114,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(1);
   });
 
-  test("Proceeds in case of Dependabot PR and range is black listed", async () => {
+  test("Proceeds in case of Dependabot PR and range is disallowed", async () => {
     expect.assertions(5);
 
     const [result, message] = await autoMerge(
@@ -132,7 +132,7 @@ describe("#autoMerge", () => {
     expect(askForReviewSpy).toHaveBeenCalledTimes(1);
   });
 
-  test("Proceeds in case of Dependabot PR and range without target is black listed", async () => {
+  test("Proceeds in case of Dependabot PR and range without target is disallowed", async () => {
     expect.assertions(5);
 
     const [result, message] = await autoMerge(

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { UnsupportedFeatureError, WrongInputError } from "../src/errors";
-import { getDisallowlist, getName, getRawVersion, ParseError } from "../src/lib/parse";
+import { getDisallowList, getName, getRawVersion, ParseError } from "../src/lib/parse";
 
 describe("parse", () => {
   describe("#getName", () => {
@@ -63,13 +63,13 @@ describe("parse", () => {
     });
   });
 
-  describe("#getBlackList", () => {
+  describe("#getDisallowList", () => {
     test("Throws when provided with wrong input", () => {
       expect.assertions(2);
 
       const deps = ["fake-one:fake"];
       try {
-        getDisallowlist(deps.join(" "));
+        getDisallowList(deps.join(" "));
       } catch (error) {
         expect(error).toBeInstanceOf(WrongInputError);
         if (error instanceof Error) {
@@ -82,26 +82,26 @@ describe("parse", () => {
       const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
       const expected = { "fake-one": "major", "fake-2": "minor", "fake-3": "patch" };
 
-      expect(getDisallowlist(deps.join(" "))).toMatchObject(expected);
-      expect(getDisallowlist(deps.join("\n"))).toMatchObject(expected);
-      expect(getDisallowlist(deps.join("        "))).toMatchObject(expected);
+      expect(getDisallowList(deps.join(" "))).toMatchObject(expected);
+      expect(getDisallowList(deps.join("\n"))).toMatchObject(expected);
+      expect(getDisallowList(deps.join("        "))).toMatchObject(expected);
       expect(
-        getDisallowlist(
+        getDisallowList(
           deps.join(`
           `),
         ),
       ).toMatchObject(expected);
     });
 
-    test("Parses a row black list", () => {
+    test("Parses a row disallow list", () => {
       const deps = ["fake-one:major", "fake-2:minor", "fake-3:patch"];
-      const parsed = getDisallowlist(deps.join(" "));
+      const parsed = getDisallowList(deps.join(" "));
       expect(parsed).toMatchObject({ "fake-one": "major", "fake-2": "minor", "fake-3": "patch" });
     });
 
     test("Considers the absence of limit as 'patch'", () => {
       const deps = ["fake"];
-      const parsed = getDisallowlist(deps.join(" "));
+      const parsed = getDisallowList(deps.join(" "));
       expect(parsed).toMatchObject({ fake: "patch" });
     });
   });

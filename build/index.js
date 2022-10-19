@@ -10015,8 +10015,8 @@ function getRawVersion(title, target) {
   }
   throw new ParseError("No valid 'version' found in PR title.");
 }
-function getDisallowlist(rawDisallowlist2) {
-  return rawDisallowlist2.split(/\s/).reduce((acc, raw) => {
+function getDisallowList(rawDisallowList2) {
+  return rawDisallowList2.split(/\s/).reduce((acc, raw) => {
     const [name, limit] = raw.split(":");
     if (!limit || ["major", "minor", "patch"].includes(limit)) {
       return {
@@ -10087,7 +10087,7 @@ function isBumpAllowed(bump, releaseType, disallowlist) {
 }
 
 // src/auto-merge.ts
-async function autoMerge(context2, rawDisallowlist2, rawReviewers) {
+async function autoMerge(context2, rawDisallowList2, rawReviewers) {
   const { pull_request: pullRequest } = context2.payload;
   const reviewers = rawReviewers.split(" ");
   try {
@@ -10103,7 +10103,7 @@ async function autoMerge(context2, rawDisallowlist2, rawReviewers) {
       const proceed = isBumpAllowed(
         bump,
         diff(bump.from.full, bump.to.full),
-        getDisallowlist(rawDisallowlist2)
+        getDisallowList(rawDisallowList2)
       );
       const pullRequestParam = { repo: context2.repo, prNumber: pullRequest.number };
       if (proceed) {
@@ -10135,8 +10135,8 @@ async function autoMerge(context2, rawDisallowlist2, rawReviewers) {
 }
 
 // src/index.ts
-var rawDisallowlist = [core2.getInput("npm-disallowlist"), core2.getInput("gha-disallowlist")].filter((item) => item).join(" ");
-autoMerge(github2.context, rawDisallowlist, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
+var rawDisallowList = [core2.getInput("npm-disallowlist"), core2.getInput("gha-disallowlist")].filter((item) => item).join(" ");
+autoMerge(github2.context, rawDisallowList, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
   if (error instanceof NotDependabotPrError) {
     console.log(error.message);
   } else if (error instanceof Error) {
