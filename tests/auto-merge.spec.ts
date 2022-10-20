@@ -22,9 +22,9 @@ describe("#autoMerge", () => {
 
     const ctx = Object.assign(contextExample, { actor: "Test bot" });
 
-    const [result, message] = await autoMerge(ctx, "", "");
+    const { status, message } = await autoMerge(ctx, "", "");
 
-    expect(result).toBe("NOK");
+    expect(status).toBe("NOK");
     expect(message).toBe("💤 Skipping: This is not a Dependabot PR.");
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
@@ -34,7 +34,7 @@ describe("#autoMerge", () => {
   test("Skips in case of no valid versions", async () => {
     expect.assertions(5);
 
-    const [result, message] = await autoMerge(
+    const { status, message } = await autoMerge(
       {
         actor: "dependabot[bot]",
         payload: {
@@ -48,7 +48,7 @@ describe("#autoMerge", () => {
       "",
     );
 
-    expect(result).toBe("NOK");
+    expect(status).toBe("NOK");
     expect(message).toBe("No valid 'version' found in PR title.");
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
@@ -58,7 +58,7 @@ describe("#autoMerge", () => {
   test("Skips in case of not supported feature", async () => {
     expect.assertions(5);
 
-    const [result, message] = await autoMerge(
+    const { status, message } = await autoMerge(
       {
         actor: "dependabot[bot]",
         payload: {
@@ -72,7 +72,7 @@ describe("#autoMerge", () => {
       "",
     );
 
-    expect(result).toBe("NOK");
+    expect(status).toBe("NOK");
     expect(message).toBe("Unsupported feature.");
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
@@ -83,9 +83,9 @@ describe("#autoMerge", () => {
     expect.assertions(6);
     const ctx = Object.assign(contextExample, { actor: "dependabot[bot]" });
 
-    const [result, message] = await autoMerge(ctx, "", "");
+    const { status, message } = await autoMerge(ctx, "", "");
 
-    expect(result).toBe("OK");
+    expect(status).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledOnce();
     expect(approveSpy).toHaveBeenCalledWith({
@@ -99,7 +99,7 @@ describe("#autoMerge", () => {
   test("Proceeds in case of Dependabot PR and dependency is disallowed", async () => {
     expect.assertions(5);
 
-    const [result, message] = await autoMerge(
+    const { status, message } = await autoMerge(
       {
         actor: "dependabot[bot]",
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
@@ -107,7 +107,7 @@ describe("#autoMerge", () => {
       "something/specific:patch",
       "",
     );
-    expect(result).toBe("OK");
+    expect(status).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
@@ -117,7 +117,7 @@ describe("#autoMerge", () => {
   test("Proceeds in case of Dependabot PR and range is disallowed", async () => {
     expect.assertions(5);
 
-    const [result, message] = await autoMerge(
+    const { status, message } = await autoMerge(
       {
         actor: "dependabot[bot]",
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
@@ -125,7 +125,7 @@ describe("#autoMerge", () => {
       "something/*:patch",
       "",
     );
-    expect(result).toBe("OK");
+    expect(status).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
@@ -135,7 +135,7 @@ describe("#autoMerge", () => {
   test("Proceeds in case of Dependabot PR and range without target is disallowed", async () => {
     expect.assertions(5);
 
-    const [result, message] = await autoMerge(
+    const { status, message } = await autoMerge(
       {
         actor: "dependabot[bot]",
         payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
@@ -143,7 +143,7 @@ describe("#autoMerge", () => {
       "something/*",
       "",
     );
-    expect(result).toBe("OK");
+    expect(status).toBe("OK");
     expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);

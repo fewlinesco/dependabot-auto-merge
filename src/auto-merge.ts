@@ -15,7 +15,7 @@ export default async function autoMerge(
   context: Context,
   rawDisallowList: string,
   rawReviewers: string,
-): Promise<["OK" | "NOK", string]> {
+): Promise<{ status: "OK" | "NOK"; message: string }> {
   const { pull_request: pullRequest } = context.payload;
   const reviewers = rawReviewers.split(" ");
   try {
@@ -48,7 +48,11 @@ export default async function autoMerge(
         );
       }
     }
-    return ["OK", "Automerge process ended."];
+
+    return {
+      status: "OK",
+      message: "Automerge process ended.",
+    };
   } catch (error) {
     if (
       error instanceof NotValidSemverError ||
@@ -58,11 +62,21 @@ export default async function autoMerge(
       if (pullRequest) {
         await github.askForReview({ repo: context.repo, prNumber: pullRequest.number }, reviewers, error.message);
       }
-      return ["NOK", error.message];
+
+      return {
+        status: "NOK",
+        message: error.message,
+      };
     } else if (error instanceof NotDependabotPrError) {
-      return ["NOK", error.message];
+      return {
+        status: "NOK",
+        message: error.message,
+      };
     } else if (error instanceof ReviewAlreadyPendingError) {
-      return ["OK", error.message];
+      return {
+        status: "OK",
+        message: error.message,
+      };
     } else {
       throw error;
     }
