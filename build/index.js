@@ -10117,17 +10117,29 @@ async function autoMerge(context2, rawDisallowList2, rawReviewers) {
         );
       }
     }
-    return ["OK", "Automerge process ended."];
+    return {
+      status: "OK",
+      message: "Automerge process ended."
+    };
   } catch (error) {
     if (error instanceof NotValidSemverError || error instanceof UnsupportedFeatureError || error instanceof ParseError) {
       if (pullRequest) {
         await askForReview({ repo: context2.repo, prNumber: pullRequest.number }, reviewers, error.message);
       }
-      return ["NOK", error.message];
+      return {
+        status: "NOK",
+        message: error.message
+      };
     } else if (error instanceof NotDependabotPrError) {
-      return ["NOK", error.message];
+      return {
+        status: "NOK",
+        message: error.message
+      };
     } else if (error instanceof ReviewAlreadyPendingError) {
-      return ["OK", error.message];
+      return {
+        status: "OK",
+        message: error.message
+      };
     } else {
       throw error;
     }
@@ -10136,7 +10148,7 @@ async function autoMerge(context2, rawDisallowList2, rawReviewers) {
 
 // src/index.ts
 var rawDisallowList = [core2.getInput("npm-disallowlist"), core2.getInput("gha-disallowlist")].filter((item) => item).join(" ");
-autoMerge(github2.context, rawDisallowList, core2.getInput("reviewers") || "").then(([result, message]) => console.log(result === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
+autoMerge(github2.context, rawDisallowList, core2.getInput("reviewers") || "").then(({ status, message }) => console.log(status === "OK" ? "\u2705 - " : "\u{1F6A7} - " + message)).catch((error) => {
   if (error instanceof NotDependabotPrError) {
     console.log(error.message);
   } else if (error instanceof Error) {
