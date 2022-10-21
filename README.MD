@@ -83,7 +83,7 @@ In this example:
 - `pkg-a:major` means major bumps won't be allowed for `pkg-a`. But minors and patches can still be auto merged.
 - `pkg-b:minor` means major and minor bumps won't be allowed for `pkg-b`. But patches can still be auto merged.
 - `pkg-c:patch` and `pkg-d` is a different syntax for the same thing: no auto merge allowed.
-- `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `"@typescript-eslint` on a major version: `"@typescript-eslint/*:major`.
+- The usage of `*` at the end like in `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `"@typescript-eslint/something` package on a major version: `"@typescript-eslint/*:major`.
 
 #### `reviewers`
 
