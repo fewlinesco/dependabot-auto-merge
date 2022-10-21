@@ -50,7 +50,7 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
     "🚧 Manual check needed 🚧\n" +
     (message ? ":\n**" + message + "**" : ".") +
     "\n\n" +
-    reviewers.reduce((acc, reviewer) => `${acc}@${reviewer} `, "");
+    reviewers.map((reviewer) => `@${reviewer}`).join(" ");
 
   const { data: comments } = await octokit.rest.issues.listComments({
     ...repo,
