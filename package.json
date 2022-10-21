@@ -1,6 +1,6 @@
 {
   "name": "dependabot-auto-merge",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
@@ -16,6 +16,8 @@
     "@types/node": "18.11.3",
     "@typescript-eslint/eslint-plugin": "5.40.1",
     "@typescript-eslint/parser": "5.40.1",
+    "@types/semver": "7.3.12",
+    "dotenv": "16.0.3",
     "eslint": "8.25.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
@@ -29,6 +31,6 @@
     "extends": "@fewlines/eslint-config/typescript"
   },
   "dependencies": {
-    "dotenv": "16.0.3"
+    "semver": "7.3.8"
   }
 }

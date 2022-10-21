@@ -1,43 +1,152 @@
+import { Context } from "@actions/github/lib/context";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import autoMerge, { NotDependabotPrError } from "../src/auto-merge";
+import autoMerge from "../src/auto-merge";
 import * as github from "../src/lib/github";
 import { contextExample } from "./context";
 
 vi.mock("../src/lib/github");
 
 describe("#autoMerge", () => {
-  const squashAndMergeSpy = vi.spyOn(github, "squashAndMerge");
   const approveSpy = vi.spyOn(github, "approve");
+  const askForReviewSpy = vi.spyOn(github, "askForReview");
+  const squashAndMergeSpy = vi.spyOn(github, "squashAndMerge");
+  const SUCCESS_MESSAGE = "Automerge process ended.";
 
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  test("Runs in case of Dependabot PR", async () => {
-    expect.assertions(3);
+  test("Skips if the requester is not Dependabot", async () => {
+    expect.assertions(5);
 
-    await autoMerge(contextExample);
+    const ctx = Object.assign(contextExample, { actor: "Test bot" });
 
+    const { status, message } = await autoMerge(ctx, "", "");
+
+    expect(status).toBe("NOK");
+    expect(message).toBe("💤 Skipping: This is not a Dependabot PR.");
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(0);
+  });
+
+  test("Skips in case of no valid versions", async () => {
+    expect.assertions(5);
+
+    const { status, message } = await autoMerge(
+      {
+        actor: "dependabot[bot]",
+        payload: {
+          pull_request: {
+            title: "Bump something/specific from not-a-valid-versioning to not-a-valid-versioning",
+            number: 80,
+          },
+        },
+      } as unknown as Context,
+      "something/specific:patch",
+      "",
+    );
+
+    expect(status).toBe("NOK");
+    expect(message).toBe("No valid 'version' found in PR title.");
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Skips in case of not supported feature", async () => {
+    expect.assertions(5);
+
+    const { status, message } = await autoMerge(
+      {
+        actor: "dependabot[bot]",
+        payload: {
+          pull_request: {
+            title: "Bump something/specific from 0.0.1-alpha.1 to 0.0.1",
+            number: 80,
+          },
+        },
+      } as unknown as Context,
+      "something/specific:patch",
+      "",
+    );
+
+    expect(status).toBe("NOK");
+    expect(message).toBe("Unsupported feature.");
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Proceeds in case of Dependabot PR and no disallowlist provided", async () => {
+    expect.assertions(6);
+    const ctx = Object.assign(contextExample, { actor: "dependabot[bot]" });
+
+    const { status, message } = await autoMerge(ctx, "", "");
+
+    expect(status).toBe("OK");
+    expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledOnce();
     expect(approveSpy).toHaveBeenCalledWith({
       repo: contextExample.repo,
       prNumber: contextExample.payload.pull_request?.number,
     });
     expect(squashAndMergeSpy).toHaveBeenCalledOnce();
+    expect(askForReviewSpy).toHaveBeenCalledTimes(0);
   });
 
-  test("Exits if the requester is not Dependabot", async () => {
-    expect.assertions(3);
+  test("Proceeds in case of Dependabot PR and dependency is disallowed", async () => {
+    expect.assertions(5);
 
-    const ctx = Object.assign(contextExample, { actor: "Test bot" });
-    try {
-      await autoMerge(ctx);
-    } catch (error) {
-      expect(error).toBeInstanceOf(NotDependabotPrError);
-    }
-
+    const { status, message } = await autoMerge(
+      {
+        actor: "dependabot[bot]",
+        payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
+      } as unknown as Context,
+      "something/specific:patch",
+      "",
+    );
+    expect(status).toBe("OK");
+    expect(message).toBe(SUCCESS_MESSAGE);
     expect(approveSpy).toHaveBeenCalledTimes(0);
     expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Proceeds in case of Dependabot PR and range is disallowed", async () => {
+    expect.assertions(5);
+
+    const { status, message } = await autoMerge(
+      {
+        actor: "dependabot[bot]",
+        payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
+      } as unknown as Context,
+      "something/*:patch",
+      "",
+    );
+    expect(status).toBe("OK");
+    expect(message).toBe(SUCCESS_MESSAGE);
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Proceeds in case of Dependabot PR and range without target is disallowed", async () => {
+    expect.assertions(5);
+
+    const { status, message } = await autoMerge(
+      {
+        actor: "dependabot[bot]",
+        payload: { pull_request: { title: "Bump something/specific from 1.0.0 to 2.0.0", number: 80 } },
+      } as unknown as Context,
+      "something/*",
+      "",
+    );
+    expect(status).toBe("OK");
+    expect(message).toBe(SUCCESS_MESSAGE);
+    expect(approveSpy).toHaveBeenCalledTimes(0);
+    expect(squashAndMergeSpy).toHaveBeenCalledTimes(0);
+    expect(askForReviewSpy).toHaveBeenCalledTimes(1);
   });
 });

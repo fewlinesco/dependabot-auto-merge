@@ -1,14 +1,20 @@
+import * as core from "@actions/core";
 import * as github from "@actions/github";
 
 import autoMerge, { NotDependabotPrError } from "./auto-merge";
 
-autoMerge(github.context)
-  .then(() => console.log("🤖 - PR Approved and merge requested"))
+const rawDisallowList = [core.getInput("npm-disallowlist"), core.getInput("gha-disallowlist")]
+  .filter((item) => item)
+  .join(" ");
+
+autoMerge(github.context, rawDisallowList, core.getInput("reviewers") || "")
+  .then(({ status, message }) => console.log(status === "OK" ? "✅ - " : "🚧 - " + message))
   .catch((error) => {
     if (error instanceof NotDependabotPrError) {
-      console.log("🤖 - Not a Dependabot PR.");
+      console.log(error.message);
     } else if (error instanceof Error) {
-      console.log("💥 - ", error.message);
-      console.log("👉 - ", error.stack);
+      console.error("💥 - ", error.message);
+      console.error("👉 - ", error.stack);
+      throw error;
     }
   });

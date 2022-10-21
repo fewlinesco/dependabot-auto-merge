@@ -7,7 +7,7 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  hello_world_job:
+  auto-merge:
     runs-on: ubuntu-latest
 
     name: Approve and ask for merge
@@ -22,3 +22,4 @@ jobs:
         id: automerge
         with:
           github-token: ${{ secrets.GH_TOKEN }}
+          reviewers: Meyclem
