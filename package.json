@@ -14,7 +14,7 @@
     "@actions/github": "5.1.1",
     "@fewlines/eslint-config": "3.1.2",
     "@types/node": "18.11.5",
-    "@typescript-eslint/eslint-plugin": "5.40.1",
+    "@typescript-eslint/eslint-plugin": "5.41.0",
     "@typescript-eslint/parser": "5.41.0",
     "@types/semver": "7.3.12",
     "dotenv": "16.0.3",
