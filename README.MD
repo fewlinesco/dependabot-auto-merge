@@ -1,3 +1,5 @@
+![GitHub tag badge(latest by date)](https://img.shields.io/github/v/tag/fewlinesco/dependabot-auto-merge?label=Latest%20✅) [![Tests badge](https://github.com/fewlinesco/dependabot-auto-merge/actions/workflows/test.yml/badge.svg)](https://github.com/fewlinesco/dependabot-auto-merge/actions/workflows/test.yml) [![Linter badge](https://github.com/fewlinesco/dependabot-auto-merge/actions/workflows/eslint.yaml/badge.svg)](https://github.com/fewlinesco/dependabot-auto-merge/actions/workflows/eslint.yaml)
+
 # Dependabot AutoMerge Github Action
 
 This Github action allows to handle Dependabot pull requests.
@@ -36,12 +38,14 @@ jobs:
 
     steps:
       - name: 🔬 Auto merge
-        uses: fewlinesco/dependabot-auto-merge
+        uses: fewlinesco/dependabot-auto-merge@vx.x.x # Use the latest version
         with:
           github-token: ${{ secrets.GH_TOKEN }}
 ```
 
 This basic configuration will allow **any pull request from Dependabot** to be approved and merged.
+
+**💡 Tip**: It is recommended to update your dependancies before adding the action because it can be long, based on the time one PR needs to pass checks and the number of dependancies need to be updated. Keep in mind that for every pull request merged, every remaining one will be rebased and approved again. (e.g: Given 10 outated dependancies, it would process 45 rebases: `n * (n - 1) / 2` where `n` is the number of pull requests).
 
 ### Workflow inputs
 
@@ -50,7 +54,7 @@ This basic configuration will allow **any pull request from Dependabot** to be a
 ```yaml
 # ...
 - name: 🔬 Auto merge
-  uses: fewlinesco/dependabot-auto-merge
+  uses: fewlinesco/dependabot-auto-merge@vx.x.x
   with:
     github-token: ${{ secrets.GH_TOKEN }}
 ```
@@ -64,11 +68,10 @@ It's also required to **register github token into Dependabot's secrets** on the
 
 A list of dependancies on which you want additional control. The syntax is `<dependency-name>[:<limitation>]`:
 
-
 ```yaml
 # ...
 - name: 🔬 Auto merge
-  uses: fewlinesco/dependabot-auto-merge
+  uses: fewlinesco/dependabot-auto-merge@vx.x.x
   with:
     github-token: ${{ secrets.GH_TOKEN }}
     npm-disallowlist: pkg-a:major pkg-b:minor
@@ -90,7 +93,7 @@ In this example:
 ```yaml
 # ...
 - name: 🔬 Auto merge
-  uses: fewlinesco/dependabot-auto-merge
+  uses: fewlinesco/dependabot-auto-merge@vx.x.x
   with:
     github-token: ${{ secrets.GH_TOKEN }}
     reviewers: FirstReviewer SecondReviewer
