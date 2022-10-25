@@ -47,8 +47,8 @@ async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string
   const octokit = getClient();
 
   const body =
-    "🚧 Manual check needed 🚧\n" +
-    (message ? ":\n**" + message + "**" : ".") +
+    "🚧 Manual check needed 🚧" +
+    (message ? "\n\n**" + message + "**" : "") +
     "\n\n" +
     reviewers.map((reviewer) => `@${reviewer}`).join(" ");
 
