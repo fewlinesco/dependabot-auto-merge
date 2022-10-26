@@ -4,7 +4,7 @@
 
 This Github action allows to handle Dependabot pull requests.
 
-Based on dependancies versions, sensitiveness or project preferences, it is possible to automatically review a PR and ask Dependabot to squash and merge upon checks success (tests, deploy, linter...).
+Based on dependencies versions, sensitiveness or project preferences, it is possible to automatically review a PR and ask Dependabot to squash and merge upon checks success (tests, deploy, linter...).
 
 💡 Interactions with Dependabot are done through a [Github personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). It means that the action will answer and give commands to dependabot **on the behalf of the token's owner**.
 
@@ -45,7 +45,7 @@ jobs:
 
 This basic configuration will allow **any pull request from Dependabot** to be approved and merged.
 
-**💡 Tip**: It is recommended to update your dependancies before adding the action because it can be long, based on the time one PR needs to pass checks and the number of dependancies need to be updated. Keep in mind that for every pull request merged, every remaining one will be rebased and approved again. (e.g: Given 10 outated dependancies, it would process 45 rebases: `n * (n - 1) / 2` where `n` is the number of pull requests).
+**💡 Tip**: It is recommended to update your dependencies before adding the action because it can be long, based on the time one PR needs to pass checks and the number of dependencies need to be updated. Keep in mind that for every pull request merged, every remaining one will be rebased and approved again. (e.g: Given 10 outdated dependencies, it would process 45 rebases: `n * (n - 1) / 2` where `n` is the number of pull requests).
 
 ### Workflow inputs
 
@@ -66,7 +66,7 @@ It's also required to **register github token into Dependabot's secrets** on the
 
 #### `npm-disallowlist` and `gha-disallowlist`
 
-A list of dependancies on which you want additional control. The syntax is `<dependency-name>[:<limitation>]`:
+A list of dependencies on which you want additional control. The syntax is `<dependency-name>[:<limitation>]`:
 
 ```yaml
 # ...
@@ -80,7 +80,7 @@ A list of dependancies on which you want additional control. The syntax is `<dep
       pkg-d pkg-e*"
 ```
 
-> one line and multine syntaxes are allowed.
+> One line and multiline syntax are allowed.
 
 In this example:
 - `pkg-a:major` means major bumps won't be allowed for `pkg-a`. But minors and patches can still be auto merged.
@@ -101,4 +101,4 @@ In this example:
 
 Reviewers **must be valid Github nicknames"**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
 
-💡 If you go with this option, we recommend you to remove the reviwers from your Dependabot config file: It would defeat the purpose to only add reviewers if the auto merge is not possible.
+💡 If you go with this option, we recommend you to remove the reviewers from your Dependabot config file: It would defeat the purpose to only add reviewers if the auto merge is not possible.
