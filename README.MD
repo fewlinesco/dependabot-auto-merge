@@ -77,7 +77,7 @@ A list of dependencies on which you want additional control. The syntax is `<dep
     npm-disallowlist: pkg-a:major pkg-b:minor
     gha-disallowlist: >
       pkg-c:patch
-      pkg-d pkg-e*"
+      pkg-d pkg-e*
 ```
 
 > One line and multiline syntax are allowed.
@@ -86,7 +86,7 @@ In this example:
 - `pkg-a:major` means major bumps won't be allowed for `pkg-a`. But minors and patches can still be auto merged.
 - `pkg-b:minor` means major and minor bumps won't be allowed for `pkg-b`. But patches can still be auto merged.
 - `pkg-c:patch` and `pkg-d` is a different syntax for the same thing: no auto merge allowed.
-- The usage of `*` at the end like in `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `"@typescript-eslint/something` package on a major version: `"@typescript-eslint/*:major`.
+- The usage of `*` at the end like in `pkg-e*` means that every package with a name starting with `pkg-e` will be impacted. It is cumulative with bump level. e.g: we could want to freeze every `@typescript-eslint/something` package on a major version: `@typescript-eslint/*:major`.
 
 #### `reviewers`
 
@@ -99,6 +99,10 @@ In this example:
     reviewers: FirstReviewer SecondReviewer
 ```
 
-Reviewers **must be valid Github nicknames"**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
+Reviewers **must be valid Github usernames**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
 
 💡 If you go with this option, we recommend you to remove the reviewers from your Dependabot config file: It would defeat the purpose to only add reviewers if the auto merge is not possible.
+
+## Credits
+
+This project has been inspired by [Ahmad Nassri](https://github.com/ahmadnassri)'s work on [Dependabot Auto Merge](https://github.com/ahmadnassri/action-dependabot-auto-merge).
