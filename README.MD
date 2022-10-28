@@ -99,7 +99,7 @@ In this example:
     reviewers: FirstReviewer SecondReviewer
 ```
 
-Reviewers **must be valid Github usernames**. If the auto merge action is not allowed, the PAT will allow to post a message with a ping to reviewers and will ask a review from them.
+Reviewers **must be valid Github usernames**. If the auto merge action is not allowed, the PAT will allow to ask a review from them.
 
 💡 If you go with this option, we recommend you to remove the reviewers from your Dependabot config file: It would defeat the purpose to only add reviewers if the auto merge is not possible.
 
