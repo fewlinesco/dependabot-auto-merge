@@ -46,11 +46,7 @@ async function squashAndMerge({ repo, prNumber }: ActionPayload): Promise<void> 
 async function askForReview({ repo, prNumber }: ActionPayload, reviewers: string[], message?: string): Promise<void> {
   const octokit = getClient();
 
-  const body =
-    "🚧 Manual check needed 🚧" +
-    (message ? "\n\n**" + message + "**" : "") +
-    "\n\n" +
-    reviewers.map((reviewer) => `@${reviewer}`).join(" ");
+  const body = "🚧 Manual check needed 🚧" + (message ? "\n\n**" + message + "**" : "");
 
   const { data: comments } = await octokit.rest.issues.listComments({
     ...repo,
