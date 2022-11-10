@@ -27,7 +27,7 @@ function getRawVersion(title: string, target: "from" | "to"): string {
   const regex =
     /(?<version>(?<major>0|[1-9]\d*)(\.(?<minor>(0|[1-9]\d*))(\.(?<patch>(0|[1-9]\d*))(?:-((?<remainder>0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)?)?)/;
 
-  const matches = title.match(new RegExp(`${target} \\D*${regex.source}`));
+  const matches = title.match(new RegExp(` ${target} \\D*${regex.source}`));
 
   if (matches && matches.groups && matches.groups.version && matches.groups.major) {
     if (matches.groups.remainder) {

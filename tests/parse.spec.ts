@@ -43,6 +43,21 @@ describe("parse", () => {
       expect(to).toBe(target);
     });
 
+    test("Returns the right versions from title event with deps name containing 'to'", () => {
+      expect.assertions(4);
+
+      const source = "0.0.1";
+      const target = "0.0.2";
+      const from = getRawVersion(`Bump deps-name-to from ${source} to ${target}`, "from");
+      const to = getRawVersion(`Bump deps-name-to from ${source} to ${target}`, "to");
+
+      expect(typeof from).toBe("string");
+      expect(from).toBe(source);
+
+      expect(typeof to).toBe("string");
+      expect(to).toBe(target);
+    });
+
     test("Rounds incomplete numeric versions to semver", () => {
       expect.assertions(4);
 
